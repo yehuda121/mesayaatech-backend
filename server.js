@@ -23,17 +23,17 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db"); // conect to DB file
-// const userRoutes = require("./routes/userRoutes"); // מסלולי המשתמשים
+// const userRoutes = require("./routes/userRoutes"); 
 
 dotenv.config(); // Loads environment variables from .env
 
 connectDB(); // Connect to MongoDB
 
 const app = express();
-app.use(express.json()); // כדי לאפשר שליחת JSON
-app.use(cors()); // כדי לאפשר קריאות API מה-Frontend
+app.use(express.json()); // for sending JSON
+app.use(cors()); // to allow calls to API from the - Frontend
 
-// מחבר את הנתיבים
+// conects the routes
 app.use("/api/users", userRoutes);
 
 app.get("/", (req, res) => {
