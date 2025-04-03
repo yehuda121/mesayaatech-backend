@@ -1,3 +1,4 @@
+// module.exports = router;
 const express = require('express');
 const router = express.Router();
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
@@ -17,13 +18,20 @@ router.post('/', async (req, res) => {
     const formData = req.body;
     const content = JSON.stringify(formData, null, 2);
 
-    const fullNameClean = formData.fullName.trim().replace(/\s+/g, '_');
+    const fullNameClean = formData.fullName.trim().replace(/\s+/g, '-');
     const id = formData.idNumber.trim();
-    const fileName = `reserve/${fullNameClean}-${id}.json`; 
+    const userType = formData.userType?.toLowerCase(); // 'reservist' / 'mentor' / 'ambassador'
+
+    if (!userType || !['reservists', 'mentors', 'ambassadors'].includes(userType + 's')) {
+      return res.status(400).json({ error: 'userType שגוי או חסר' });
+    }
+
+    const folderName = `${fullNameClean}-${id}`;
+    const key = `mesayaatech-users-data/${userType}s/${folderName}/registration-form.json`;
 
     const command = new PutObjectCommand({
       Bucket: 'mesayaatech-bucket',
-      Key: fileName,
+      Key: key,
       Body: content,
       ContentType: 'application/json',
     });
