@@ -16,7 +16,7 @@ const s3 = new S3Client({
 router.get('/', async (req, res) => {
     console.log("ROUTE HIT");
     const { userType, folder } = req.query;
-    console.log("Looking for key:", `mesayaatech-users-data/${userType}s/${folder}/registration-form.json`);
+    // console.log("Looking for key:", `mesayaatech-users-data/${userType}s/${folder}/registration-form.json`);
 
   if (!userType || !folder) {
     return res.status(400).json({ error: 'Missing userType or folder' });
@@ -25,7 +25,7 @@ router.get('/', async (req, res) => {
   const key = `mesayaatech-users-data/${userType}s/${folder}/registration-form.json`;
 
   try {
-    console.log("Looking for key:", key);
+    // console.log("Looking for key:", key);
     const command = new GetObjectCommand({ Bucket: 'mesayaatech-bucket', Key: key });
     const response = await s3.send(command);
 
