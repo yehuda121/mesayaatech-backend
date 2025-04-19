@@ -1,20 +1,27 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const uploadRoute = require('./routes/upload-registration-form');
-const importUsersRoute = require('./routes/import-users');
-const updateStatusRoute = require('./routes/update-status');
-const userFormRoute = require('./routes/user-form');
+
+const uploadRegistrationForms = require('./routes/registrationForms/upload-registration-form');
+const importUsers = require('./routes/users/import-users');
+const updateUserStatus = require('./routes/users/update-user-status');
+const userForm = require('./routes/registrationForms/imports-user-registration-form');
+const events = require('./routes/events/import-events');
+const deleteEvent = require('./routes/events/delete-event');
+const uploadEvent = require('./routes/events/upload-event');
 
 require('dotenv').config();
 
 app.use(cors());
 app.use(express.json());
 
-app.use('/api/user-form', userFormRoute);
-app.use('/api/upload', uploadRoute);
-app.use('/api/import-users', importUsersRoute);
-app.use('/api/update-status', updateStatusRoute);
+app.use('/api/upload-registration-form', uploadRegistrationForms);
+app.use('/api/import-users', importUsers);
+app.use('/api/update-status', updateUserStatus);
+app.use('/api/imports-user-registration-form', userForm);
+app.use('/api/import-events', events);
+app.use('/api/delete-event', deleteEvent);
+app.use('/api/upload-event', uploadEvent);
 
 const PORT = 5000;
 

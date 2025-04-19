@@ -1,6 +1,6 @@
 const express = require('express');
 const { S3Client, GetObjectCommand, PutObjectCommand } = require('@aws-sdk/client-s3');
-const cache = require('../utils/cache'); // 🧠 שימוש באותו קאש
+const cache = require('../../utils/chache');
 const router = express.Router();
 require('dotenv').config();
 
