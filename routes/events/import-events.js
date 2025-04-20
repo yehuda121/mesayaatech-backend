@@ -4,6 +4,7 @@ require('dotenv').config();
 
 const router = express.Router();
 
+// Initialize the S3 client with region and credentials from environment variables
 const s3 = new S3Client({
   region: 'eu-north-1',
   credentials: {
@@ -15,7 +16,7 @@ const s3 = new S3Client({
 const BUCKET_NAME = 'mesayaatech-bucket';
 const PREFIX = 'events/';
 
-// פונקציה לקרוא stream
+// Function to convert a readable stream into a string
 const streamToString = async (stream) => {
   const chunks = [];
   for await (const chunk of stream) {
@@ -24,11 +25,12 @@ const streamToString = async (stream) => {
   return Buffer.concat(chunks).toString('utf-8');
 };
 
-// ייבוא כל האירועים הרלוונטיים מה־S3
+// Route to import all relevant event files from S3
 router.get('/', async (req, res) => {
   try {
     const now = new Date();
 
+    // List all objects in the 'events/' prefix
     const listCommand = new ListObjectsV2Command({
       Bucket: BUCKET_NAME,
       Prefix: PREFIX,
@@ -40,6 +42,7 @@ router.get('/', async (req, res) => {
     const events = [];
 
     for (const obj of Contents) {
+      // Fetch each individual object from S3
       const getCommand = new GetObjectCommand({
         Bucket: BUCKET_NAME,
         Key: obj.Key,
@@ -49,7 +52,7 @@ router.get('/', async (req, res) => {
       const content = await streamToString(response.Body);
       const event = JSON.parse(content);
 
-      // רק אם האירוע לא עבר (כולל היום עצמו)
+      // Only include events that haven't passed (including today)
       const eventDate = new Date(`${event.date}T${event.time || '00:00'}`);
       const today = new Date(now.toDateString());
 
@@ -58,12 +61,12 @@ router.get('/', async (req, res) => {
       }
     }
 
-    // מיון לפי תאריך קרוב → רחוק
+    // Sort events by date (soonest to latest)
     events.sort((a, b) => new Date(a.date) - new Date(b.date));
 
     res.status(200).json(events);
   } catch (err) {
-    console.error('❌ שגיאה בייבוא אירועים:', err);
+    console.error('Error importing events:', err);
     res.status(500).json({ error: 'Failed to import events' });
   }
 });
