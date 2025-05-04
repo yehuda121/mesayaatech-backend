@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 
-const uploadRegistrationForms = require('./routes/registrationForms/upload-registration-form');
+// const uploadRegistrationForms = require('./routes/registrationForms/upload-registration-form');
 const importUsers = require('./routes/users/import-users');
 const updateUserStatus = require('./routes/users/update-user-status');
 const userForm = require('./routes/registrationForms/imports-user-registration-form');
@@ -18,7 +18,7 @@ require('dotenv').config();
 app.use(cors());
 app.use(express.json());
 
-app.use('/api/upload-registration-form', uploadRegistrationForms);
+app.use('/api/upload-registration-form', require('./routes/registrationForms/upload-registration-form'));
 app.use('/api/import-users', importUsers);
 app.use('/api/update-status', updateUserStatus);
 app.use('/api/imports-user-registration-form', userForm);
