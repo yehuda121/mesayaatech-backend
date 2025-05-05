@@ -1,11 +1,11 @@
 const express = require('express');
-const { S3Client, ListObjectsV2Command, GetObjectCommand } = require('@aws-sdk/client-s3');
+const { DynamoDBClient, ScanCommand } = require('@aws-sdk/client-dynamodb');
+const { unmarshall } = require('@aws-sdk/util-dynamodb');
 require('dotenv').config();
 
 const router = express.Router();
 
-// Initialize the S3 client with region and credentials from environment variables
-const s3 = new S3Client({
+const ddb = new DynamoDBClient({
   region: 'eu-north-1',
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -13,61 +13,62 @@ const s3 = new S3Client({
   },
 });
 
-const BUCKET_NAME = 'mesayaatech-bucket';
-const PREFIX = 'events/';
-
-// Function to convert a readable stream into a string
-const streamToString = async (stream) => {
-  const chunks = [];
-  for await (const chunk of stream) {
-    chunks.push(chunk);
-  }
-  return Buffer.concat(chunks).toString('utf-8');
+// Helper: Normalizes date to YYYY-MM-DD
+const normalizeDate = (dateStr) => {
+  const date = new Date(dateStr);
+  return date.toISOString().split('T')[0];
 };
 
-// Route to import all relevant event files from S3
 router.get('/', async (req, res) => {
+  const { from, to, title, includePast } = req.query;
+
   try {
     const now = new Date();
+    const todayStr = normalizeDate(now);
 
-    // List all objects in the 'events/' prefix
-    const listCommand = new ListObjectsV2Command({
-      Bucket: BUCKET_NAME,
-      Prefix: PREFIX,
+    // Scan all events (can be optimized later with GSI)
+    const command = new ScanCommand({
+      TableName: 'Events',
+      FilterExpression: 'begins_with(PK, :prefix)',
+      ExpressionAttributeValues: {
+        ':prefix': { S: 'event#' },
+      },
     });
 
-    const { Contents } = await s3.send(listCommand);
-    if (!Contents) return res.status(200).json([]);
+    const result = await ddb.send(command);
+    let items = result.Items.map(item => unmarshall(item));
 
-    const events = [];
-
-    for (const obj of Contents) {
-      // Fetch each individual object from S3
-      const getCommand = new GetObjectCommand({
-        Bucket: BUCKET_NAME,
-        Key: obj.Key,
+    // Filter: by date (from / to)
+    if (from || to) {
+      items = items.filter(event => {
+        const eventDate = normalizeDate(event.date || '');
+        return (!from || eventDate >= from) && (!to || eventDate <= to);
       });
-
-      const response = await s3.send(getCommand);
-      const content = await streamToString(response.Body);
-      const event = JSON.parse(content);
-
-      // Only include events that haven't passed (including today)
-      const eventDate = new Date(`${event.date}T${event.time || '00:00'}`);
-      const today = new Date(now.toDateString());
-
-      if (eventDate >= today) {
-        events.push(event);
-      }
     }
 
-    // Sort events by date (soonest to latest)
-    events.sort((a, b) => new Date(a.date) - new Date(b.date));
+    // Filter: by title keyword (case insensitive)
+    if (title) {
+      const lowered = title.toLowerCase();
+      items = items.filter(event =>
+        event.title && event.title.toLowerCase().includes(lowered)
+      );
+    }
 
-    res.status(200).json(events);
+    // Filter: exclude past events unless explicitly included
+    if (!includePast || includePast === 'false') {
+      items = items.filter(event => {
+        const eventDate = normalizeDate(event.date || '');
+        return eventDate >= todayStr;
+      });
+    }
+
+    // Sort by date
+    items.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    res.status(200).json(items);
   } catch (err) {
-    console.error('Error importing events:', err);
-    res.status(500).json({ error: 'Failed to import events' });
+    console.error('Failed to fetch events:', err);
+    res.status(500).json({ error: 'Server error while fetching events' });
   }
 });
 

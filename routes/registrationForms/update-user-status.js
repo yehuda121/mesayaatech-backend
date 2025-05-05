@@ -1,0 +1,48 @@
+const express = require('express');
+const { DynamoDBClient, UpdateItemCommand } = require('@aws-sdk/client-dynamodb');
+const router = express.Router();
+require('dotenv').config();
+
+const db = new DynamoDBClient({
+  region: 'eu-north-1',
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
+});
+
+router.post('/', async (req, res) => {
+  const { fullName, idNumber, userType, status: newStatus } = req.body;
+
+  if (!fullName || !idNumber || !userType || !newStatus) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  const PK = `${userType}#${idNumber}`;
+  const SK = 'registrationForm';
+
+  const command = new UpdateItemCommand({
+    TableName: 'userForms',
+    Key: {
+      PK: { S: PK },
+      SK: { S: SK },
+    },
+    UpdateExpression: 'SET #s = :newStatus',
+    ExpressionAttributeNames: {
+      '#s': 'status',
+    },
+    ExpressionAttributeValues: {
+      ':newStatus': { S: newStatus },
+    },
+  });
+
+  try {
+    await db.send(command);
+    res.status(200).json({ message: 'Status updated successfully in DynamoDB' });
+  } catch (err) {
+    console.error('Failed to update status in DynamoDB:', err);
+    res.status(500).json({ error: 'Failed to update status in DynamoDB' });
+  }
+});
+
+module.exports = router;

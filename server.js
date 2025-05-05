@@ -37,8 +37,8 @@ app.use(cors()); // to allow calls to API from the - Frontend
 app.use("/api/users", userRoutes);
 
 app.get("/", (req, res) => {
-  res.send("🚀 API is running and connected to MongoDB!");
+  res.send("API is running and connected to MongoDB!");
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

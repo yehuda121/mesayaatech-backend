@@ -74,10 +74,8 @@ const ddb = new DynamoDBClient({
 
 // Route to upload a user's registration form to DynamoDB
 router.post('/', async (req, res) => {
-  console.log('📥 Received POST request to /upload-registration-form');
   try {
     const formData = req.body;
-    console.log("📥 Received data:", formData);
     // Validate required fields
     const requiredFields = ['userType', 'status', 'fullName', 'idNumber', 'email'];
     for (const field of requiredFields) {
@@ -88,10 +86,10 @@ router.post('/', async (req, res) => {
 
     const userType = formData.userType.toLowerCase(); // 'reservist', 'mentor', 'ambassador'
     const status = formData.status.toLowerCase(); // usually 'pending', 'approved', etc.
-    const email = formData.email.toLowerCase();
+    const idNumber = formData.idNumber.trim();
 
     const item = {
-      PK: `${userType}#${email}`,   // Partition Key
+      PK: `${userType}#${idNumber}`,   // Partition Key
       SK: status,                   // Sort Key
       idNumber: formData.idNumber.trim(),
       fullName: formData.fullName.trim(),
@@ -106,7 +104,7 @@ router.post('/', async (req, res) => {
     };
 
     const command = new PutItemCommand({
-      TableName: 'Users',
+      TableName: 'userForms',
       Item: marshall(item),
     });
 
