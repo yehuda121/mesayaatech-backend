@@ -1,11 +1,14 @@
 const express = require('express');
-const { S3Client, DeleteObjectCommand } = require('@aws-sdk/client-s3');
+const router = express.Router();
+const {
+  DynamoDBClient,
+  DeleteItemCommand,
+} = require('@aws-sdk/client-dynamodb');
+const { marshall } = require('@aws-sdk/util-dynamodb');
+
 require('dotenv').config();
 
-const router = express.Router();
-
-// Initialize the S3 client with credentials and region from environment variables
-const s3 = new S3Client({
+const ddb = new DynamoDBClient({
   region: 'eu-north-1',
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -13,34 +16,31 @@ const s3 = new S3Client({
   },
 });
 
-// Define the S3 bucket name and the prefix for event files
-const BUCKET_NAME = 'mesayaatech-bucket';
-const PREFIX = 'events/';
+const sanitizeTitleForKey = (title) => {
+  return title.trim().replace(/\s+/g, '-').replace(/[^a-zA-Z0-9א-ת-_]/g, '');
+};
 
-// Define a POST route to delete an event file from the S3 bucket
 router.post('/', async (req, res) => {
-  try {
-    const { filename } = req.body;
-
-    // Return error if no filename is provided
-    if (!filename) return res.status(400).json({ error: 'Missing filename' });
-
-    // Create the delete command for the specific file in the events/ folder
-    const command = new DeleteObjectCommand({
-      Bucket: BUCKET_NAME,
-      Key: PREFIX + filename,
-    });
-
-    // Send the command to S3 to delete the object
-    await s3.send(command);
-
-    // Return a success response
-    res.status(200).json({ message: 'Event deleted successfully' });
-  } catch (err) {
-    // Log the error and return a server error response
-    console.error('Error deleting event:', err);
-    res.status(500).json({ error: 'Failed to delete event' });
-  }
-});
-
-module.exports = router;
+    try {
+        console.log("trying to delete event");
+        const { filename } = req.body;
+        if (!filename) return res.status(400).json({ error: 'Missing filename' });
+    
+        const [date, ...titleParts] = filename.replace('.json', '').split('-');
+        const cleanTitle = titleParts.join('-');
+        const key = `${date}-${cleanTitle}`;
+    
+        const command = new DeleteItemCommand({
+            TableName: 'Events',
+            Key: marshall({ PK: `event#${key}`, SK: 'metadata' })
+        });
+    
+        await ddb.send(command);
+        res.status(200).json({ message: 'Event deleted successfully' });
+    } catch (err) {
+        console.error('Delete failed:', err);
+        res.status(500).json({ error: 'Failed to delete event', details: err.message });
+    }
+  });
+  
+  module.exports = router;
