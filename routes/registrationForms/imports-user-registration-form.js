@@ -55,11 +55,12 @@
 //     res.status(500).json({ error: 'Error fetching user data' });
 //   }
 // });
-
 const express = require('express');
 const { DynamoDBClient, ScanCommand } = require('@aws-sdk/client-dynamodb');
 const { unmarshall } = require('@aws-sdk/util-dynamodb');
 const router = express.Router();
+
+require('dotenv').config();
 
 const db = new DynamoDBClient({
   region: 'eu-north-1',
@@ -69,33 +70,56 @@ const db = new DynamoDBClient({
   },
 });
 
+const tableNameMap = {
+  reservist: 'reservUserForms',
+  mentor: 'mentorUserForms',
+  ambassador: 'ambassadorUserForms',
+};
+
+// ✅ נתיב חדש: מביא את כל המשתמשים מכל הטבלאות
+router.get('/all', async (req, res) => {
+  try {
+    const allData = [];
+
+    for (const [userType, tableName] of Object.entries(tableNameMap)) {
+      const data = await db.send(new ScanCommand({ TableName: tableName }));
+      const users = data.Items.map(item => {
+        const parsed = unmarshall(item);
+        return { ...parsed, userType }; // מוסיף userType לתוצאה
+      });
+      allData.push(...users);
+    }
+
+    res.json(allData);
+  } catch (err) {
+    console.error('DynamoDB scan error:', err);
+    res.status(500).json({ error: 'Failed to fetch user data from all tables' });
+  }
+});
+
+// ✅ הנתיב הקיים: שליפה לפי userType וסטטוס
 router.get('/', async (req, res) => {
   const { userType, status } = req.query;
 
-  const params = {
-    TableName: 'userForms',
-  };
+  const cleanType = (userType || '').toLowerCase();
+  const tableName = tableNameMap[cleanType];
+
+  if (!tableName) {
+    return res.status(400).json({ error: 'Missing or invalid userType parameter' });
+  }
 
   try {
-    const data = await db.send(new ScanCommand(params));
-    const allUsers = data.Items.map(item => {
-      const parsed = unmarshall(item);
-      return {
-        ...parsed,
-        userType: parsed.PK?.split('#')[0] || '',
-        status: parsed.SK || '',
-      };
-    });
+    const data = await db.send(new ScanCommand({ TableName: tableName }));
+    const allUsers = data.Items.map(item => unmarshall(item));
 
-    const filtered = allUsers.filter(u => {
-      const matchType = userType ? u.userType === userType : true;
-      const matchStatus = status ? u.status === status : true;
-      return matchType && matchStatus;
+    const filtered = allUsers.filter(user => {
+      const matchStatus = status ? user.status === status : true;
+      return matchStatus;
     });
 
     res.json(filtered);
   } catch (err) {
-    console.error('DynamoDB error:', err);
+    console.error('DynamoDB scan error:', err);
     res.status(500).json({ error: 'Failed to fetch user data from DynamoDB' });
   }
 });

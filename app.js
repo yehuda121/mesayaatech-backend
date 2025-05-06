@@ -10,7 +10,7 @@ const uploadEvent = require('./routes/events/upload-event');
 
 const uploadJobs = require('./routes/jobs/upload-job');
 const importJobs = require('./routes/jobs/import-jobs');
-const { DynamoDB } = require('aws-sdk');
+// const { DynamoDB } = require('aws-sdk');
 
 require('dotenv').config();
 
@@ -23,7 +23,8 @@ app.use('/api/imports-user-registration-form', require('./routes/registrationFor
 
 //S3
 // app.use('/api/import-users', importUsers);
-app.use('/api/update-status', updateUserStatus);
+app.use('/api/update-user-status', updateUserStatus);
+
 app.use('/api/import-events', events);
 app.use('/api/delete-event', deleteEvent);
 app.use('/api/upload-event', uploadEvent);

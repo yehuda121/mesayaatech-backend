@@ -18,11 +18,24 @@ router.post('/', async (req, res) => {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
-  const PK = `${userType}#${idNumber}`;
+  const tableNameMap = {
+    reservist: 'reservUserForms',
+    mentor: 'mentorUserForms',
+    ambassador: 'ambassadorUserForms',
+  };
+
+  const cleanType = userType.toLowerCase();
+  const tableName = tableNameMap[cleanType];
+
+  if (!tableName) {
+    return res.status(400).json({ error: 'Invalid userType' });
+  }
+
+  const PK = `${cleanType}#${idNumber.trim()}`;
   const SK = 'registrationForm';
 
   const command = new UpdateItemCommand({
-    TableName: 'userForms',
+    TableName: tableName,
     Key: {
       PK: { S: PK },
       SK: { S: SK },
