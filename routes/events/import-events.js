@@ -36,7 +36,13 @@ router.get('/', async (req, res) => {
     });
 
     const result = await ddb.send(command);
-    let items = result.Items.map(item => unmarshall(item));
+    let items = result.Items.map(item => {
+      const unmarshalled = unmarshall(item);
+      return {
+        ...unmarshalled,
+        eventId: unmarshalled.PK?.replace('event#', '') || ''
+      };
+    });    
 
     // Filter: by date (from / to)
     if (from || to) {

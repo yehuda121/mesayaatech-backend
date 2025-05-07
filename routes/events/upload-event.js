@@ -1,11 +1,12 @@
+// module.exports = router;
 const express = require('express');
 const router = express.Router();
 const { DynamoDBClient, PutItemCommand } = require('@aws-sdk/client-dynamodb');
 const { marshall } = require('@aws-sdk/util-dynamodb');
+const { v4: uuidv4 } = require('uuid'); // נוסיף את זה בראש הקובץ
 
 require('dotenv').config();
 
-// Initialize DynamoDB client
 const ddb = new DynamoDBClient({
   region: 'eu-north-1',
   credentials: {
@@ -14,36 +15,25 @@ const ddb = new DynamoDBClient({
   },
 });
 
-// Function to sanitize the event title for use in keys
-const sanitizeTitleForKey = (title) => {
-  return title
-    .trim()
-    .replace(/\s+/g, '-')               // spaces -> hyphens
-    .replace(/[^a-zA-Z0-9א-ת-_]/g, ''); // remove invalid characters
-};
-
-// Route to upload a new event to DynamoDB
 router.post('/', async (req, res) => {
-  console.log('Received request to create event');
-
   try {
     const event = req.body;
 
-    // Validate required fields
-    if (!event.title || !event.date) {
-      return res.status(400).json({ error: 'Missing required fields: title or date' });
+    if (!event.description || !event.date) {
+      return res.status(400).json({ error: 'Missing required fields: description or date' });
     }
 
-    const cleanTitle = sanitizeTitleForKey(event.title);
-    const eventKey = `${event.date}-${cleanTitle}`;
-
+    const eventId = event.eventId || uuidv4(); // מקבל מלקוח או יוצר חדש
     const item = {
-      PK: `event#${eventKey}`,           // Partition Key
-      SK: 'metadata',                    // Sort Key
-      title: event.title.trim(),
+      PK: `event#${eventId}`,
+      SK: 'metadata',
+      eventId, // שומר גם לשימוש בלקוח
+      title: event.title?.trim() || '',
       date: event.date,
       location: event.location || '',
       description: event.description || '',
+      notes: event.notes || '',
+      time: event.time || '',
       createdAt: new Date().toISOString(),
     };
 
@@ -55,7 +45,7 @@ router.post('/', async (req, res) => {
     await ddb.send(command);
 
     console.log('Event saved to DynamoDB successfully');
-    res.status(200).json({ message: 'Event saved successfully' });
+    res.status(200).json({ message: 'Event saved successfully', eventId });
   } catch (err) {
     console.error('Error saving event to DynamoDB:', err);
     res.status(500).json({ error: 'Failed to save event', details: err.message });
