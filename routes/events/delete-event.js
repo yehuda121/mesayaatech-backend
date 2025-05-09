@@ -18,7 +18,6 @@ const ddb = new DynamoDBClient({
 
 router.post('/', async (req, res) => {
   try {
-    console.log("trying to delete event");
     const { eventId } = req.body;
     if (!eventId) return res.status(400).json({ error: 'Missing eventId' });
 

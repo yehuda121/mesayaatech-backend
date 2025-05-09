@@ -1,9 +1,8 @@
-// module.exports = router;
 const express = require('express');
 const router = express.Router();
 const { DynamoDBClient, PutItemCommand } = require('@aws-sdk/client-dynamodb');
 const { marshall } = require('@aws-sdk/util-dynamodb');
-const { v4: uuidv4 } = require('uuid'); // נוסיף את זה בראש הקובץ
+const { v4: uuidv4 } = require('uuid'); 
 
 require('dotenv').config();
 
@@ -23,11 +22,11 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'Missing required fields: description or date' });
     }
 
-    const eventId = event.eventId || uuidv4(); // מקבל מלקוח או יוצר חדש
+    const eventId = event.eventId || uuidv4(); 
     const item = {
       PK: `event#${eventId}`,
       SK: 'metadata',
-      eventId, // שומר גם לשימוש בלקוח
+      eventId,
       title: event.title?.trim() || '',
       date: event.date,
       location: event.location || '',
@@ -35,6 +34,7 @@ router.post('/', async (req, res) => {
       notes: event.notes || '',
       time: event.time || '',
       createdAt: new Date().toISOString(),
+      participants: [],
     };
 
     const command = new PutItemCommand({

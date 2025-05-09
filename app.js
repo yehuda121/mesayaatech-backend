@@ -22,6 +22,7 @@ app.use('/api/upload-event', require('./routes/events/upload-event'));
 app.use('/api/approve-user', require('./routes/approveUser'));
 app.use('/api/login', require('./routes/login'));
 app.use('/api/completeNewPassword', require('./routes/completeNewPassword'));
+app.use('/api/join-to-event', require('./routes/events/join-to-event'));
 
 app.use('/api/update-user-form', require('./routes/registrationForms/update-user-form'));
 app.use('/api/delete-user-form', require('./routes/registrationForms/delete-user-form'));
