@@ -13,6 +13,7 @@ app.use(express.json());
 
 // DynamoDB
 app.use('/api/upload-registration-form', require('./routes/registrationForms/upload-registration-form'));
+app.use('/api/get-user-form', require('./routes/registrationForms/get-user-form-by-roll-and-id'));
 app.use('/api/imports-user-registration-form', require('./routes/registrationForms/imports-user-registration-form'));
 app.use('/api/update-user-status', require('./routes/registrationForms/update-user-status'));
 app.use('/api/update-event', require('./routes/events/update-event'));
