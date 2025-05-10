@@ -1,11 +1,11 @@
 const express = require('express');
-const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
+const router = express.Router();
+const { DynamoDBClient, PutItemCommand } = require('@aws-sdk/client-dynamodb');
+const { marshall } = require('@aws-sdk/util-dynamodb');
+const { v4: uuidv4 } = require('uuid');
 require('dotenv').config();
 
-const router = express.Router();
-
-// Initialize S3 client
-const s3 = new S3Client({
+const ddb = new DynamoDBClient({
   region: 'eu-north-1',
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -13,47 +13,40 @@ const s3 = new S3Client({
   },
 });
 
-const BUCKET_NAME = 'mesayaatech-bucket';
-const PREFIX = 'jobs/';
-
-// Sanitize title for filename
-const sanitizeTitleForFilename = (title) => {
-  return title
-    .trim()
-    .replace(/\s+/g, '-')
-    .replace(/[^a-zA-Z0-9א-ת-_]/g, '');
-};
-
-// Route to upload a new job
 router.post('/', async (req, res) => {
-  console.log('Received request to create job');
-
   try {
     const job = req.body;
 
-    if (!job.title || !job.company) {
-      return res.status(400).json({ error: 'Missing required fields: title or company' });
+    if (!job.title || !job.description || !job.publisherId) {
+      return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    const cleanTitle = sanitizeTitleForFilename(job.title);
-    const filename = `${Date.now()}-${cleanTitle}.json`; // Unique by timestamp
-    const key = `${PREFIX}${filename}`;
-    const content = JSON.stringify(job, null, 2);
+    const jobId = uuidv4();
+    const item = {
+      PK: `job#${jobId}`,
+      SK: 'metadata',
+      jobId,
+      title: job.title.trim(),
+      description: job.description.trim(),
+      company: job.company || '',
+      location: job.location || '',
+      category: job.category || '',
+      postedAt: new Date().toISOString(),
+      publisherId: job.publisherId,
+      publisherType: job.publisherType || '', // e.g. "mentor"
+      attachmentUrl: job.attachmentUrl || '', // optional image/PDF URL
+    };
 
-    const command = new PutObjectCommand({
-      Bucket: BUCKET_NAME,
-      Key: key,
-      Body: content,
-      ContentType: 'application/json',
+    const command = new PutItemCommand({
+      TableName: 'Jobs',
+      Item: marshall(item),
     });
 
-    await s3.send(command);
-
-    console.log('Job uploaded successfully');
-    res.status(200).json({ message: 'Job uploaded successfully' });
+    await ddb.send(command);
+    res.status(200).json({ message: 'Job saved successfully', jobId });
   } catch (err) {
-    console.error('Error uploading job:', err);
-    res.status(500).json({ error: 'Failed to upload job', details: err.message });
+    console.error('Error saving job:', err);
+    res.status(500).json({ error: 'Failed to save job', details: err.message });
   }
 });
 
