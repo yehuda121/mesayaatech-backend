@@ -12,16 +12,17 @@
   "description": "",
   "dependencies": {
     "@aws-sdk/client-cognito-identity-provider": "^3.804.0",
-    "@aws-sdk/client-dynamodb": "^3.799.0",
-    "@aws-sdk/client-s3": "^3.779.0",
+    "@aws-sdk/client-dynamodb": "^3.808.0",
+    "@aws-sdk/client-s3": "^3.808.0",
     "@aws-sdk/s3-request-presigner": "^3.779.0",
     "@aws-sdk/types": "^3.775.0",
-    "@aws-sdk/util-dynamodb": "^3.799.0",
+    "@aws-sdk/util-dynamodb": "^3.808.0",
     "aws-sdk": "^2.1692.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "mongoose": "^8.10.1"
+    "mongoose": "^8.10.1",
+    "multer": "^1.4.5-lts.2"
   },
   "devDependencies": {
     "@ljharb/tsconfig": "^0.3.2"
