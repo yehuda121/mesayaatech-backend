@@ -16,6 +16,8 @@ app.use('/api/upload-registration-form', require('./routes/registrationForms/upl
 app.use('/api/get-user-form', require('./routes/registrationForms/get-user-form-by-roll-and-id'));
 app.use('/api/imports-user-registration-form', require('./routes/registrationForms/imports-user-registration-form'));
 app.use('/api/update-user-status', require('./routes/registrationForms/update-user-status'));
+app.use('/api/delete-cognito-user', require('./routes/usersPool/delete-user'));
+
 
 app.use('/api/update-event', require('./routes/events/update-event'));
 app.use('/api/delete-event', require('./routes/events/delete-event'));
@@ -23,9 +25,9 @@ app.use('/api/import-events', require('./routes/events/import-events'));
 app.use('/api/upload-event', require('./routes/events/upload-event'));
 app.use('/api/join-to-event', require('./routes/events/join-to-event'));
 
-app.use('/api/approve-user', require('./routes/approveUser'));
-app.use('/api/login', require('./routes/login'));
-app.use('/api/completeNewPassword', require('./routes/completeNewPassword'));
+app.use('/api/approve-user', require('./routes/usersPool/approveUser'));
+app.use('/api/login', require('./routes/usersPool/login'));
+app.use('/api/completeNewPassword', require('./routes/usersPool/completeNewPassword'));
 app.use('/api/update-user-form', require('./routes/registrationForms/update-user-form'));
 app.use('/api/delete-user-form', require('./routes/registrationForms/delete-user-form'));
 
