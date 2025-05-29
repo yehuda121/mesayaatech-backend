@@ -1,6 +1,6 @@
 const express = require('express');
-const { DynamoDBClient, PutItemCommand } = require('@aws-sdk/client-dynamodb');
-const { marshall } = require('@aws-sdk/util-dynamodb');
+const { DynamoDBClient, PutItemCommand, GetItemCommand } = require('@aws-sdk/client-dynamodb');
+const { marshall, unmarshall } = require('@aws-sdk/util-dynamodb');
 const { v4: uuidv4 } = require('uuid');
 require('dotenv').config();
 
@@ -14,14 +14,31 @@ const ddb = new DynamoDBClient({
   }
 });
 
-// POST /api/interview/answer
 router.post('/', async (req, res) => {
   try {
-    const { questionId, text, answeredBy, createdAt } = req.body;
+    const { questionId, text, answeredBy, answeredName, createdAt } = req.body;
 
     if (!questionId || !text || !answeredBy) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
+
+    // Fetch original question to get the category
+    const getCommand = new GetItemCommand({
+      TableName: 'InterviewQuestions',
+      Key: marshall({
+        PK: `question#${questionId}`,
+        SK: 'metadata',
+      }),
+    });
+
+    const questionData = await ddb.send(getCommand);
+
+    if (!questionData.Item) {
+      return res.status(404).json({ error: 'Question not found' });
+    }
+
+    const question = unmarshall(questionData.Item);
+    const category = question.category || 'other';
 
     const answerId = uuidv4();
 
@@ -29,9 +46,11 @@ router.post('/', async (req, res) => {
       PK: `question#${questionId}`,
       SK: `answer#${answerId}`,
       answerId,
-      questionId,
+      questionId, 
       text,
       answeredBy,
+      answeredName,
+      category,
       createdAt: createdAt || new Date().toISOString(),
     });
 

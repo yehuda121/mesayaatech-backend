@@ -20,13 +20,58 @@ router.get('/', async (req, res) => {
     });
 
     const data = await ddb.send(command);
-    console.log('📥 ScanCommand response:', JSON.stringify(data, null, 2));
+    const items = data.Items?.map(item => unmarshall(item)) || [];
 
-    const questions = data.Items?.map(item => unmarshall(item)) || [];
+    const questionsMap = {};
 
-    return res.status(200).json(questions);
+    // שלב 1: יצירת אובייקטים לשאלות בלבד
+    items.forEach(item => {
+      if (item.SK === 'metadata') {
+        const questionId = item.PK.replace('question#', '');
+        questionsMap[questionId] = {
+          questionId,
+          text: item.text,
+          category: item.category,
+          createdAt: item.createdAt,
+          createdBy: item.createdBy,
+          answers: [],
+        };
+      }
+    });
+
+    // שלב 2: הוספת תשובות לשאלות לפי ה־questionId ב־PK
+    items.forEach(item => {
+      if (item.SK.startsWith('answer#')) {
+        const questionId = item.PK.replace('question#', '');
+
+        const answer = {
+          answerId: item.answerId,
+          text: item.text,
+          answeredBy: item.answeredBy,
+          answeredName: item.answeredName,
+          createdAt: item.createdAt,
+        };
+
+        if (!questionsMap[questionId]) {
+          questionsMap[questionId] = {
+            questionId,
+            text: '(שאלה לא נטענה עדיין)',
+            category: item.category || 'other',
+            createdAt: null,
+            createdBy: null,
+            answers: [],
+          };
+        }
+
+        questionsMap[questionId].answers.push(answer);
+      }
+    });
+
+    const result = Object.values(questionsMap);
+    console.log("🧾 Loaded questions:", JSON.stringify(result, null, 2));
+    return res.status(200).json(result);
   } catch (err) {
-    console.error("❌ Failed to fetch questions:", err);
+    console.error("❌ Failed to fetch interview questions:", err);
     return res.status(500).json({ error: 'Server error', details: err.message });
   }
 });
