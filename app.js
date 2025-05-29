@@ -10,7 +10,13 @@ const uploadJob = require('./routes/jobs/upload-job');
 const importJobs = require('./routes/jobs/import-jobs');     
 const deleteJob = require('./routes/jobs/delete-job');       
 const updateJob = require('./routes/jobs/update-job'); 
-
+// === Interview ===
+const uploadQuestion = require('./routes/interview/upload-question');
+console.log('uploadQuestion:', typeof uploadQuestion);
+const uploadAnswer = require('./routes/interview/upload-answer');
+console.log('uploadAnswer:', typeof uploadAnswer);
+const getQuestions = require('./routes/interview/get-questions');
+console.log('getQuestions:', typeof getQuestions);
 // DynamoDB
 app.use('/api/upload-registration-form', require('./routes/registrationForms/upload-registration-form'));
 app.use('/api/get-user-form', require('./routes/registrationForms/get-user-form-by-roll-and-id'));
@@ -35,6 +41,14 @@ app.use('/api/jobs', uploadJob);
 app.use('/api/import-jobs', importJobs);  
 app.use('/api/delete-job', deleteJob);     
 app.use('/api/update-job', updateJob);
+// === Interview routes ===
+app.use('/api/interview/question', uploadQuestion);
+app.use('/api/interview/answer', uploadAnswer);
+app.use('/api/interview/questions', getQuestions);
+
+
+
+
 
 const PORT = 5000;
 
