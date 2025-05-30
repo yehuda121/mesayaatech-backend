@@ -63,7 +63,7 @@ router.post('/', async (req, res) => {
 
     return res.status(200).json({ message: 'Answer uploaded', answerId });
   } catch (err) {
-    console.error("❌ Error uploading answer:", err);
+    console.error("Error uploading answer:", err);
     return res.status(500).json({ error: 'Server error', details: err.message });
   }
 });

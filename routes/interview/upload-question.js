@@ -45,7 +45,7 @@ router.post('/', async (req, res) => {
     return res.status(200).json({ message: 'Question uploaded', questionId });
 
   } catch (err) {
-    console.error("❌ Error uploading question:", err);
+    console.error("Error uploading question:", err);
     return res.status(500).json({ error: 'Server error', details: err.message });
   }
 });
