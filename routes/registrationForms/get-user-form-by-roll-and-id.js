@@ -12,7 +12,6 @@ const db = new DynamoDBClient({
   },
 });
 
-// מיפוי שמות טבלאות לפי סוג משתמש
 const tableNameMap = {
   reservist: 'reservUserForms',
   mentor: 'mentorUserForms',

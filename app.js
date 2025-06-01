@@ -38,6 +38,9 @@ app.use('/api/delete-cognito-user', require('./routes/usersPool/delete-user'));
 app.use('/api/approve-user', require('./routes/usersPool/approveUser'));
 app.use('/api/login', require('./routes/usersPool/login'));
 app.use('/api/completeNewPassword', require('./routes/usersPool/completeNewPassword'));
+app.use('/api/assign-mentor', require('./routes/usersPool/assign-mentor'));
+app.use('/api/filter-users', require('./routes/usersPool/filter-users'));
+
 
 // === Start server ===
 const PORT = 5000;
