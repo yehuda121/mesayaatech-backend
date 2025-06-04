@@ -24,7 +24,7 @@ router.get('/by-publisher', async (req, res) => {
   try {
     const command = new QueryCommand({
       TableName: 'Jobs',
-      IndexName: 'publisherIndex', // נדרש אינדקס משני אם לא קיים כבר
+      IndexName: 'publisherIndex', 
       KeyConditionExpression: 'publisherId = :publisherId AND publisherType = :publisherType',
       ExpressionAttributeValues: {
         ':publisherId': { S: publisherId },

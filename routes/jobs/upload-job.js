@@ -41,12 +41,14 @@ router.post('/', upload.single('attachment'), async (req, res) => {
 
     const jobId = uuidv4();
     const {
-      title, company, location, description,
-      publisherId, publisherType
+      company, location, role, minExperience, description,
+      requirements, advantages, submitEmail, submitLink,
+      companyWebsite, jobViewLink, publisherId, publisherType
     } = req.body;
 
-    if (!title || !description || !publisherId) {
-      console.warn("❌ Missing required fields");
+
+    if (!description || !publisherId) {
+      console.warn("Missing required fields");
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
@@ -69,9 +71,9 @@ router.post('/', upload.single('attachment'), async (req, res) => {
       try {
         await s3.send(new PutObjectCommand(uploadParams));
         attachmentUrl = `https://${process.env.S3_BUCKET_NAME}.s3.amazonaws.com/${key}`;
-        console.log("✅ File uploaded:", attachmentUrl);
+        console.log("File uploaded:", attachmentUrl);
       } catch (uploadErr) {
-        console.error("❌ Failed uploading to S3:", uploadErr);
+        console.error("Failed uploading to S3:", uploadErr);
         return res.status(500).json({ error: 'Failed uploading file to S3', details: uploadErr.message });
       }
     }
@@ -81,10 +83,17 @@ router.post('/', upload.single('attachment'), async (req, res) => {
       PK: `job#${jobId}`,
       SK: 'metadata',
       jobId,
-      title,
       company: company || '',
       location: location || '',
-      description,
+      role: role || '',
+      minExperience: minExperience || '',
+      description: description || '',
+      requirements: requirements || '',
+      advantages: advantages || '',
+      submitEmail: submitEmail || '',
+      submitLink: submitLink || '',
+      companyWebsite: companyWebsite || '',
+      jobViewLink: jobViewLink || '',
       publisherId,
       publisherType: publisherType || '',
       postedAt: new Date().toISOString(),
@@ -98,17 +107,17 @@ router.post('/', upload.single('attachment'), async (req, res) => {
       });
 
       await ddb.send(command);
-      console.log("✅ Job saved to DynamoDB:", jobId);
+      console.log("Job saved to DynamoDB:", jobId);
 
       return res.status(200).json({ message: 'Job created successfully', jobId, attachmentUrl });
 
     } catch (ddbErr) {
-      console.error("❌ Failed saving to DynamoDB:", ddbErr);
+      console.error("Failed saving to DynamoDB:", ddbErr);
       return res.status(500).json({ error: 'Failed saving job to DB', details: ddbErr.message });
     }
 
   } catch (err) {
-    console.error('🔥 General server error:', err);
+    console.error('General server error:', err);
     return res.status(500).json({ error: 'Server error', details: err.message || err });
   }
 });

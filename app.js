@@ -41,6 +41,10 @@ app.use('/api/completeNewPassword', require('./routes/usersPool/completeNewPassw
 app.use('/api/assign-mentor', require('./routes/usersPool/assign-mentor'));
 app.use('/api/filter-users', require('./routes/usersPool/filter-users'));
 
+// === AI / Jobs ===
+app.use('/api/parse-job-text', require('./routes/AI/parseJobText'));
+app.use('/api/extract-image-text', require('./routes/AI/extractImageText'));
+
 
 // === Start server ===
 const PORT = 5000;
