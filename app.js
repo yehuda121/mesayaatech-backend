@@ -13,10 +13,12 @@ app.use('/api/delete-job', require('./routes/jobs/delete-job'));
 app.use('/api/update-job', require('./routes/jobs/update-job'));
 app.use('/api/jobs-by-publisherID', require('./routes/jobs/get-jobs-by-publisherID'));
 
-// === Interview routes ===
-app.use('/api/interview/question', require('./routes/interview/upload-question'));
-app.use('/api/interview/answer', require('./routes/interview/upload-answer'));
-app.use('/api/interview/questions', require('./routes/interview/get-questions'));
+// === Interview Questions routes ===
+app.use('/api/upload-question', require('./routes/interviewQuestions/upload-question'));
+app.use('/api/post-answer', require('./routes/interviewQuestions/post-answer'));
+app.use('/api/get-questions', require('./routes/interviewQuestions/get-questions'));
+app.use('/api/toggle-question-like', require('./routes/interviewQuestions/toggle-question-like'));
+app.use('/api/update-question', require('./routes/interviewQuestions/update-question'));
 
 // === Registration Forms (DynamoDB) ===
 app.use('/api/upload-registration-form', require('./routes/registrationForms/upload-registration-form'));

@@ -24,7 +24,6 @@ router.get('/', async (req, res) => {
 
     const questionsMap = {};
 
-    // שלב 1: יצירת אובייקטים לשאלות בלבד
     items.forEach(item => {
       if (item.SK === 'metadata') {
         const questionId = item.PK.replace('question#', '');
@@ -34,12 +33,12 @@ router.get('/', async (req, res) => {
           category: item.category,
           createdAt: item.createdAt,
           createdBy: item.createdBy,
+          likes: item.likes || [],
           answers: [],
         };
       }
     });
 
-    // שלב 2: הוספת תשובות לשאלות לפי ה־questionId ב־PK
     items.forEach(item => {
       if (item.SK.startsWith('answer#')) {
         const questionId = item.PK.replace('question#', '');
@@ -68,10 +67,10 @@ router.get('/', async (req, res) => {
     });
 
     const result = Object.values(questionsMap);
-    console.log("🧾 Loaded questions:", JSON.stringify(result, null, 2));
+    // console.log("Loaded questions:", JSON.stringify(result, null, 2));
     return res.status(200).json(result);
   } catch (err) {
-    console.error("❌ Failed to fetch interview questions:", err);
+    console.error("Failed to fetch interview questions:", err);
     return res.status(500).json({ error: 'Server error', details: err.message });
   }
 });

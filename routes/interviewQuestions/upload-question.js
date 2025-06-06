@@ -15,24 +15,28 @@ const ddb = new DynamoDBClient({
 });
 
 router.post('/', async (req, res) => {
-
   try {
-    const { text, category, createdBy, createdAt } = req.body;
+    const { text, category, createdBy, idNumber } = req.body;
 
-    if (!text || !category || !createdBy) {
+    if (!text || !category || !createdBy || !idNumber) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    const questionId = uuidv4();
+    const createdAt = new Date().toISOString();
+    const randomId = uuidv4();
+
+    const questionId = `ques#${idNumber}#${randomId}`;
+    const pk = `${idNumber}#${randomId}`;
 
     const item = marshall({
-      PK: `question#${questionId}`,
+      PK: pk,
       SK: 'metadata',
       questionId,
       text,
       category,
       createdBy,
-      createdAt: createdAt || new Date().toISOString()
+      idNumber,
+      createdAt
     });
 
     const command = new PutItemCommand({
@@ -43,9 +47,8 @@ router.post('/', async (req, res) => {
     await ddb.send(command);
 
     return res.status(200).json({ message: 'Question uploaded', questionId });
-
   } catch (err) {
-    console.error("Error uploading question:", err);
+    console.error('Error uploading question:', err);
     return res.status(500).json({ error: 'Server error', details: err.message });
   }
 });

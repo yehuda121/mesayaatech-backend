@@ -4,7 +4,7 @@ const {
 } = require('@aws-sdk/client-bedrock-runtime');
 const { buildPrompt } = require('./promptBuilder');
 
-console.log('USING CLAUDE 3 HAIKU (bedrockClient.js)');
+// console.log('USING CLAUDE 3 HAIKU (bedrockClient.js)');
 
 const client = new BedrockRuntimeClient({
   region: 'us-east-1',
