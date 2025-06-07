@@ -19,6 +19,7 @@ app.use('/api/post-answer', require('./routes/interviewQuestions/post-answer'));
 app.use('/api/get-questions', require('./routes/interviewQuestions/get-questions'));
 app.use('/api/toggle-question-like', require('./routes/interviewQuestions/toggle-question-like'));
 app.use('/api/update-question', require('./routes/interviewQuestions/update-question'));
+app.use('/api/delete-question', require('./routes/interviewQuestions/delete-question'));
 
 // === Registration Forms (DynamoDB) ===
 app.use('/api/upload-registration-form', require('./routes/registrationForms/upload-registration-form'));
