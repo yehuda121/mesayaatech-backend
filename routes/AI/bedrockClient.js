@@ -2,7 +2,7 @@ const {
   BedrockRuntimeClient,
   InvokeModelCommand,
 } = require('@aws-sdk/client-bedrock-runtime');
-const { buildPrompt } = require('./promptBuilder');
+const { buildPrompt, buildMatchPrompt  } = require('./promptBuilder');
 
 // console.log('USING CLAUDE 3 HAIKU (bedrockClient.js)');
 
@@ -45,5 +45,36 @@ async function parseJobTextWithClaude(inputText) {
     throw new Error('Claude did not return valid JSON');
   }
 }
+async function parseMatchPromptWithClaude(mentor, reservist) {
+  const prompt = buildMatchPrompt(mentor, reservist); // ← נגדיר אותו בקובץ promptBuilder.js
 
-module.exports = { parseJobTextWithClaude };
+  const command = new InvokeModelCommand({
+    modelId: 'anthropic.claude-3-haiku-20240307-v1:0',
+    contentType: 'application/json',
+    accept: 'application/json',
+    body: JSON.stringify({
+      anthropic_version: 'bedrock-2023-05-31',
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: 1024,
+    }),
+  });
+
+  const response = await client.send(command);
+  const rawBody = await response.body.transformToString();
+  const responseBody = JSON.parse(rawBody);
+  const content = responseBody.content?.[0]?.text || '{}';
+
+  try {
+    return JSON.parse(content);
+  } catch {
+    throw new Error('Claude did not return valid JSON');
+  }
+}
+
+module.exports = {
+  parseJobTextWithClaude,
+  parseMatchPromptWithClaude 
+};
+
+
+
