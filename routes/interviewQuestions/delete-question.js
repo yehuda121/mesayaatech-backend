@@ -19,16 +19,13 @@ router.post('/', async (req, res) => {
   }
 
   try {
-    // שלב 1: חילוץ ה־PK לפי פורמט השאלה והתשובה
     const pk = questionId.replace(/^ques#/, '');
 
-    // שלב 2: מחיקת השאלה עצמה
     await ddb.send(new DeleteItemCommand({
       TableName: 'InterviewQuestions',
       Key: marshall({ PK: pk, SK: 'metadata' }),
     }));
 
-    // שלב 3: מחיקת כל התשובות עם אותו PK ו־SK שמתחיל ב־'answer#'
     const answersQuery = new QueryCommand({
       TableName: 'InterviewQuestions',
       KeyConditionExpression: 'PK = :pk',

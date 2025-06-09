@@ -43,6 +43,7 @@ app.use('/api/login', require('./routes/usersPool/login'));
 app.use('/api/completeNewPassword', require('./routes/usersPool/completeNewPassword'));
 app.use('/api/assign-mentor', require('./routes/usersPool/assign-mentor'));
 app.use('/api/filter-users', require('./routes/usersPool/filter-users'));
+app.use('/api/get-my-reservists', require('./routes/usersPool/get-my-reservists'));
 
 // === AI / Jobs ===
 app.use('/api/parse-job-text', require('./routes/AI/parseJobText'));
