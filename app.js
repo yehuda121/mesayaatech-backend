@@ -50,6 +50,10 @@ app.use('/api/parse-job-text', require('./routes/AI/parseJobText'));
 app.use('/api/extract-image-text', require('./routes/AI/extractImageText'));
 app.use('/api/match-reservists-to-mentor', require('./routes/AI/match-reservists-to-mentor'));
 
+// === Mentorsip ===
+app.use('/api/add-meeting', require('./routes/mentorship/add-meeting'));
+app.use('/api/advance-stage', require('./routes/mentorship/advance-stage'));
+app.use('/api/getAllProcess', require('./routes/mentorship/getAllProcess'));
 
 // === Start server ===
 const PORT = 5000;
