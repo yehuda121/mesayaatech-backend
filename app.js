@@ -54,6 +54,7 @@ app.use('/api/match-reservists-to-mentor', require('./routes/AI/match-reservists
 app.use('/api/add-meeting', require('./routes/mentorship/add-meeting'));
 app.use('/api/advance-stage', require('./routes/mentorship/advance-stage'));
 app.use('/api/getAllProcess', require('./routes/mentorship/getAllProcess'));
+app.use('/api/init-progress', require('./routes/mentorship/init-progress'));
 
 // === Start server ===
 const PORT = 5000;
