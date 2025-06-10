@@ -55,6 +55,9 @@ app.use('/api/add-meeting', require('./routes/mentorship/add-meeting'));
 app.use('/api/advance-stage', require('./routes/mentorship/advance-stage'));
 app.use('/api/getAllProcess', require('./routes/mentorship/getAllProcess'));
 app.use('/api/init-progress', require('./routes/mentorship/init-progress'));
+app.use('/api/delete-meeting', require('./routes/mentorship/delete-meeting'));
+app.use('/api/update-meeting', require('./routes/mentorship/update-meeting'));
+
 
 // === Start server ===
 const PORT = 5000;
