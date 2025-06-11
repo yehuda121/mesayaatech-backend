@@ -45,7 +45,7 @@ app.use('/api/assign-mentor', require('./routes/usersPool/assign-mentor'));
 app.use('/api/filter-users', require('./routes/usersPool/filter-users'));
 app.use('/api/get-my-reservists', require('./routes/usersPool/get-my-reservists'));
 
-// === AI / Jobs ===
+// === AI ===
 app.use('/api/parse-job-text', require('./routes/AI/parseJobText'));
 app.use('/api/extract-image-text', require('./routes/AI/extractImageText'));
 app.use('/api/match-reservists-to-mentor', require('./routes/AI/match-reservists-to-mentor'));
@@ -53,11 +53,13 @@ app.use('/api/match-reservists-to-mentor', require('./routes/AI/match-reservists
 // === Mentorsip ===
 app.use('/api/add-meeting', require('./routes/mentorship/add-meeting'));
 app.use('/api/advance-stage', require('./routes/mentorship/advance-stage'));
-app.use('/api/getAllProcess', require('./routes/mentorship/getAllProcess'));
+app.use('/api/getMentorshipProgress', require('./routes/mentorship/getMentorshipProgress'));
 app.use('/api/init-progress', require('./routes/mentorship/init-progress'));
 app.use('/api/delete-meeting', require('./routes/mentorship/delete-meeting'));
 app.use('/api/update-meeting', require('./routes/mentorship/update-meeting'));
 app.use('/api/delete-progress', require('./routes/mentorship/delete-progress'));
+app.use('/api/getAllProgress', require('./routes/mentorship/getAllProgress'));
+
 
 // === Start server ===
 const PORT = 5000;
