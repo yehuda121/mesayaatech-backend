@@ -57,7 +57,7 @@ app.use('/api/getAllProcess', require('./routes/mentorship/getAllProcess'));
 app.use('/api/init-progress', require('./routes/mentorship/init-progress'));
 app.use('/api/delete-meeting', require('./routes/mentorship/delete-meeting'));
 app.use('/api/update-meeting', require('./routes/mentorship/update-meeting'));
-
+app.use('/api/delete-progress', require('./routes/mentorship/delete-progress'));
 
 // === Start server ===
 const PORT = 5000;
