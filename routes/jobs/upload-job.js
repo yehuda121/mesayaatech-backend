@@ -32,7 +32,7 @@ const upload = multer({ storage });
 
 // POST /api/jobs
 router.post('/', upload.single('attachment'), async (req, res) => {
-  console.log("📥 Received job submission");
+  // console.log("Received job submission");
 
   try {
     // Debug logs
@@ -47,7 +47,7 @@ router.post('/', upload.single('attachment'), async (req, res) => {
     } = req.body;
 
 
-    if (!description || !publisherId) {
+    if (!publisherId) {
       console.warn("Missing required fields");
       return res.status(400).json({ error: 'Missing required fields' });
     }
@@ -56,7 +56,7 @@ router.post('/', upload.single('attachment'), async (req, res) => {
 
     // If a file is attached, upload it to S3
     if (req.file) {
-      console.log("📤 Uploading file to S3...");
+      // console.log("Uploading file to S3...");
 
       const fileExt = path.extname(req.file.originalname);
       const key = `jobs/${jobId}${fileExt}`; // <- make sure prefix matches bucket expectation

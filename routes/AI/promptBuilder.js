@@ -15,10 +15,17 @@ Required fields:
 - companyWebsite
 - jobViewLink
 
-If a field is not found, return it as an empty value. The text:
+General instructions:
+- Only extract information that is explicitly present in the text.
+- If a field cannot be confidently determined from the text, leave it as an empty string.
+- Do not infer, guess, or generate values that are not clearly mentioned.
+- For the "minExperience" field, always extract only the numeric number of years (integer). If no clear number exists, return it as an empty value. Do not include text like "years" or words like "three" — only numeric digits.
+
+The text:
 """${text}"""
 `;
 }
+
 function buildMatchPrompt(mentor, reservist) {
   return `
 You are an assistant that evaluates how well a mentor matches a reservist.
