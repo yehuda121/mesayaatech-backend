@@ -34,7 +34,7 @@ app.use('/api/update-event', require('./routes/events/update-event'));
 app.use('/api/delete-event', require('./routes/events/delete-event'));
 app.use('/api/import-events', require('./routes/events/import-events'));
 app.use('/api/upload-event', require('./routes/events/upload-event'));
-app.use('/api/join-to-event', require('./routes/events/join-to-event'));
+app.use('/api/toggle-join-event', require('./routes/events/toggle-join-event'));
 
 // === Users / Cognito ===
 app.use('/api/delete-cognito-user', require('./routes/usersPool/delete-user'));
