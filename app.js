@@ -60,6 +60,18 @@ app.use('/api/update-meeting', require('./routes/mentorship/update-meeting'));
 app.use('/api/delete-progress', require('./routes/mentorship/delete-progress'));
 app.use('/api/getAllProgress', require('./routes/mentorship/getAllProgress'));
 
+// === Reports ===
+app.use('/api/reports/top-job-publishers', require('./routes/reports/top-job-publishers'));
+app.use('/api/reports/mentorship-meetings-summary', require('./routes/reports/mentorship-meetings-summary'));
+app.use('/api/reports/reservists-profession-summary', require('./routes/reports/reservists-profession-summary'));
+app.use('/api/reports/reservists-location-summary', require('./routes/reports/reservists-location-summary'));
+app.use('/api/reports/interview-questions-summary', require('./routes/reports/interview-questions-summary'));
+app.use('/api/reports/users-summary', require('./routes/reports/users-summary'));
+app.use('/api/reports/reservists-registration-status', require('./routes/reports/reservists-registration-status'));
+app.use('/api/reports/reservists-mentorship-status', require('./routes/reports/reservists-mentorship-status'));
+app.use('/api/reports/jobs-per-month', require('./routes/reports/jobs-per-month'));
+app.use('/api/reports/events-per-month', require('./routes/reports/events-per-month'));
+
 
 // === Start server ===
 const PORT = 5000;
