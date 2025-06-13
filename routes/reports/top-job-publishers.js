@@ -18,7 +18,6 @@ router.get('/', async (req, res) => {
       publisherCount[publisherId] = (publisherCount[publisherId] || 0) + 1;
     });
 
-    // מיון יורד — מי הכי העלה
     const sorted = Object.entries(publisherCount)
       .sort((a, b) => b[1] - a[1])
       .map(([publisherId, count]) => ({ publisherId, count }));
