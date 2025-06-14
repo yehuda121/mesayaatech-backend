@@ -1,4 +1,3 @@
-// routes/reports/top-job-publishers.js
 const express = require('express');
 const router = express.Router();
 const { DynamoDBClient, ScanCommand } = require('@aws-sdk/client-dynamodb');
@@ -11,17 +10,19 @@ router.get('/', async (req, res) => {
     const jobsData = await ddb.send(new ScanCommand({ TableName: 'Jobs' }));
     const jobs = jobsData.Items.map(unmarshall);
 
-    const publisherCount = {};
+    const publisherMap = {};
 
     jobs.forEach(job => {
       const publisherId = job.publisherId || 'unknown';
-      publisherCount[publisherId] = (publisherCount[publisherId] || 0) + 1;
+      const publisherType = job.publisherType || 'unknown';
+
+      if (!publisherMap[publisherId]) {
+        publisherMap[publisherId] = { publisherId, publisherType, count: 0 };
+      }
+      publisherMap[publisherId].count += 1;
     });
 
-    const sorted = Object.entries(publisherCount)
-      .sort((a, b) => b[1] - a[1])
-      .map(([publisherId, count]) => ({ publisherId, count }));
-
+    const sorted = Object.values(publisherMap).sort((a, b) => b.count - a.count);
     res.json(sorted);
   } catch (err) {
     console.error('Error generating top publishers report:', err);
