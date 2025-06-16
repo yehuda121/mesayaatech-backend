@@ -39,8 +39,24 @@ router.post('/', async (req, res) => {
 
     const existing = result.Item;
 
-    if (existing.mentorId && existing.mentorId.S) {
-      return res.status(400).json({ error: 'Reservist already assigned to a mentor' });
+    if ('mentorId' in existing) {
+      const mentorField = existing.mentorId;
+
+      const assigned = (
+        ('NULL' in mentorField) || 
+        (mentorField.S === null) || 
+        (mentorField.S?.trim().toLowerCase() === 'null') ||
+        (mentorField.S?.trim() === '')
+      ) ? false : true;
+
+      if (assigned) {
+        console.log(`Reservist already assigned to a mentor: mentorId=${mentorField.S}`);
+        return res.status(400).json({ error: 'Reservist already assigned to a mentor' });
+      } else {
+        console.log('mentorId exists but empty or null, can assign');
+      }
+    } else {
+      console.log('mentorId field does not exist at all, can assign');
     }
 
     const updateCommand = new UpdateItemCommand({
