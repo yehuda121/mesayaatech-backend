@@ -33,6 +33,7 @@ router.post('/', async (req, res) => {
       Username: email,
       UserAttributes: [
         { Name: 'email', Value: email },
+        { Name: 'email_verified', Value: 'true' },
         { Name: 'name', Value: name },
         { Name: 'custom:role', Value: role },
         { Name: 'custom:idNumber', Value: idNumber }

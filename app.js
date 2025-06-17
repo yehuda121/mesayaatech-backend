@@ -39,11 +39,15 @@ app.use('/api/toggle-join-event', require('./routes/events/toggle-join-event'));
 // === Users / Cognito ===
 app.use('/api/delete-cognito-user', require('./routes/usersPool/delete-user'));
 app.use('/api/approve-user', require('./routes/usersPool/approveUser'));
-app.use('/api/login', require('./routes/usersPool/login'));
-app.use('/api/completeNewPassword', require('./routes/usersPool/completeNewPassword'));
 app.use('/api/assign-mentor', require('./routes/usersPool/assign-mentor'));
 app.use('/api/filter-users', require('./routes/usersPool/filter-users'));
 app.use('/api/get-my-reservists', require('./routes/usersPool/get-my-reservists'));
+
+// === login ===
+app.use('/api/login', require('./routes/login/login'));
+app.use('/api/completeNewPassword', require('./routes/login/completeNewPassword'));
+app.use('/api/forgot-password', require('./routes/login/forgot-password'));
+app.use('/api/confirm-forgot-password', require('./routes/login/confirm-forgot-password'));
 
 // === AI ===
 app.use('/api/parse-job-text', require('./routes/AI/parseJobText'));
