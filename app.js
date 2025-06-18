@@ -75,7 +75,7 @@ app.use('/api/reports/reservists-registration-status', require('./routes/reports
 app.use('/api/reports/reservists-mentorship-status', require('./routes/reports/reservists-mentorship-status'));
 app.use('/api/reports/jobs-per-month', require('./routes/reports/jobs-per-month'));
 app.use('/api/reports/events-per-month', require('./routes/reports/events-per-month'));
-
+app.use('/api/reports/events-participants-count', require('./routes/reports/events-participants-count'));
 
 // === Start server ===
 const PORT = 5000;
