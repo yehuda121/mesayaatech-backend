@@ -2,7 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const router = express.Router();
 const { extractTextFromImage } = require('./ocrService');
-const { parseJobTextWithClaude } = require('./bedrockClient'); // ← חזרה ל־Claude
+const { parseJobTextWithClaude } = require('./bedrockClient'); 
 
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -13,7 +13,7 @@ router.post('/', upload.single('image'), async (req, res) => {
     const text = await extractTextFromImage(req.file.buffer);
     if (!text) throw new Error('Empty OCR result');
 
-    const result = await parseJobTextWithClaude(text); // ← שינוי כאן
+    const result = await parseJobTextWithClaude(text);
     res.json({ text, ...result });
   } catch (err) {
     console.error('Image OCR error:', err);

@@ -4,8 +4,6 @@ const {
 } = require('@aws-sdk/client-bedrock-runtime');
 const { buildPrompt, buildMatchPrompt  } = require('./promptBuilder');
 
-// console.log('USING CLAUDE 3 HAIKU (bedrockClient.js)');
-
 const client = new BedrockRuntimeClient({
   region: 'us-east-1',
   credentials: {
@@ -46,7 +44,7 @@ async function parseJobTextWithClaude(inputText) {
   }
 }
 async function parseMatchPromptWithClaude(mentor, reservist) {
-  const prompt = buildMatchPrompt(mentor, reservist); // ← נגדיר אותו בקובץ promptBuilder.js
+  const prompt = buildMatchPrompt(mentor, reservist); 
 
   const command = new InvokeModelCommand({
     modelId: 'anthropic.claude-3-haiku-20240307-v1:0',
