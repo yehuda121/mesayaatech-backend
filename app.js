@@ -53,6 +53,10 @@ app.use('/api/confirm-forgot-password', require('./routes/login/confirm-forgot-p
 app.use('/api/parse-job-text', require('./routes/AI/parseJobText'));
 app.use('/api/extract-image-text', require('./routes/AI/extractImageText'));
 app.use('/api/match-reservists-to-mentor', require('./routes/AI/match-reservists-to-mentor'));
+// === Interview AI ===
+app.use('/api/interview/evaluateAnswer', require('./routes/AI/interviewWithAi/evaluateAnswerAPI'));
+app.use('/api/interview/getQuestion', require('./routes/AI/interviewWithAi/getQuestionAPI'));
+app.use('/api/interview/fetch-questions-history', require('./routes/AI/interviewWithAi/fetch-questions-history'));
 
 // === Mentorsip ===
 app.use('/api/add-meeting', require('./routes/mentorship/add-meeting'));

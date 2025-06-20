@@ -16,7 +16,7 @@ const client = new BedrockRuntimeClient({
 
 // Load prompt template from interview_prompts.json
 function getPrompt(category, difficulty, language) {
-  const promptsPath = path.join(__dirname, '..', 'data', 'interview_prompts.json');
+  const promptsPath = path.join(__dirname, 'interview_prompts.json');
   const raw = fs.readFileSync(promptsPath, 'utf-8');
   const prompts = JSON.parse(raw);
 

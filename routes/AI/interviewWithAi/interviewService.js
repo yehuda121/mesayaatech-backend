@@ -1,13 +1,11 @@
 const { DynamoDBClient, PutItemCommand, QueryCommand, UpdateItemCommand } = require('@aws-sdk/client-dynamodb');
 const { marshall, unmarshall } = require('@aws-sdk/util-dynamodb');
 
-const dynamo = new DynamoDBClient({ region: 'us-east-1' });
+const dynamo = new DynamoDBClient({ region: 'eu-north-1' });
 const TABLE_NAME = 'interviewSessions';
 const MAX_DAILY_QUESTIONS = 10;
 
-/**
- * Check if the user exceeded the daily question limit
- */
+//Check if the user exceeded the daily question limit
 async function checkDailyLimit(userId, date) {
   const command = new QueryCommand({
     TableName: TABLE_NAME,
