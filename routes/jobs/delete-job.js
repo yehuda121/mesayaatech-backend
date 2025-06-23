@@ -18,9 +18,7 @@ router.post('/', async (req, res) => {
     if (!jobId || !userId || !userType) {
       return res.status(400).json({ error: 'Missing jobId or user data' });
     }
-
-    // first validate permission here by reading the job and checking publisherId === userId or userType === "admin"
-
+    
     const command = new DeleteItemCommand({
       TableName: 'Jobs',
       Key: marshall({ PK: `job#${jobId}`, SK: 'metadata' }),

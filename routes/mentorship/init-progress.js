@@ -34,7 +34,7 @@ router.post('/', async (req, res) => {
     } 
 
     // Fetch mentor full name
-    console.log('Fetching mentor full name for mentorId:', mentorId);
+    // console.log('Fetching mentor full name for mentorId:', mentorId);
     const mentorRes = await ddb.send(new GetItemCommand({
       TableName: 'mentorUserForms',
       Key: { 
@@ -47,7 +47,7 @@ router.post('/', async (req, res) => {
     // console.log("mentorName: ", mentorName);
 
     // Fetch reservist full name
-    console.log('Fetching reservist full name for reservistId:', reservistId);
+    // console.log('Fetching reservist full name for reservistId:', reservistId);
     const reservistRes = await ddb.send(new GetItemCommand({
       TableName: 'reservUserForms',
       Key: { 
@@ -73,7 +73,7 @@ router.post('/', async (req, res) => {
     });
 
     await ddb.send(putCommand);
-    console.log('Mentorship progress initialized successfully for:', PK, SK);
+    // console.log('Mentorship progress initialized successfully for:', PK, SK);
     res.status(201).json({ message: 'Progress initialized with names' });
 
   } catch (err) {

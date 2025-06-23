@@ -24,7 +24,7 @@ router.post('/', async (req, res) => {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
-  console.log(`Attempting to create Cognito user: ${email}, role: ${role}`);
+  // console.log(`Attempting to create Cognito user: ${email}, role: ${role}`);
 
   try {
     // Prepare the command to create user and send automatic email
@@ -44,7 +44,7 @@ router.post('/', async (req, res) => {
 
     const response = await cognito.send(command);
 
-    console.log('Cognito user created successfully:', response.User);
+    // console.log('Cognito user created successfully:', response.User);
 
     res.status(200).json({ message: 'User created in Cognito and invitation sent.' });
 

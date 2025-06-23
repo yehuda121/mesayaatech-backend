@@ -20,6 +20,7 @@ app.use('/api/get-questions', require('./routes/interviewQuestions/get-questions
 app.use('/api/toggle-question-like', require('./routes/interviewQuestions/toggle-question-like'));
 app.use('/api/update-question', require('./routes/interviewQuestions/update-question'));
 app.use('/api/delete-question', require('./routes/interviewQuestions/delete-question'));
+app.use('/api/toggle-question-read', require('./routes/interviewQuestions/toggle-question-read'));
 
 // === Registration Forms (DynamoDB) ===
 app.use('/api/upload-registration-form', require('./routes/registrationForms/upload-registration-form'));
@@ -48,6 +49,7 @@ app.use('/api/login', require('./routes/login/login'));
 app.use('/api/completeNewPassword', require('./routes/login/completeNewPassword'));
 app.use('/api/forgot-password', require('./routes/login/forgot-password'));
 app.use('/api/confirm-forgot-password', require('./routes/login/confirm-forgot-password'));
+app.use('/api/change-password', require('./routes/login/change-password'));
 
 // === AI ===
 app.use('/api/parse-job-text', require('./routes/AI/parseJobText'));

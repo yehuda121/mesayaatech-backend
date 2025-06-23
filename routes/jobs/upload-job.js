@@ -36,8 +36,8 @@ router.post('/', upload.single('attachment'), async (req, res) => {
 
   try {
     // Debug logs
-    console.log("BODY:", req.body);
-    console.log("FILE:", req.file);
+    // console.log("BODY:", req.body);
+    // console.log("FILE:", req.file);
 
     const jobId = uuidv4();
     const {
@@ -107,7 +107,7 @@ router.post('/', upload.single('attachment'), async (req, res) => {
       });
 
       await ddb.send(command);
-      console.log("Job saved to DynamoDB:", jobId);
+      // console.log("Job saved to DynamoDB:", jobId);
 
       return res.status(200).json({ message: 'Job created successfully', jobId, attachmentUrl });
 

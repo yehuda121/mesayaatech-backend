@@ -12,7 +12,6 @@ router.post('/', async (req, res) => {
   }
 
   try {
-    // מחיקת פגישה ע\"י הסרתה מהרשימה לפי אינדקס
     const removeExpr = `REMOVE meetings[${meetingIndex}]`;
 
     const command = new UpdateItemCommand({

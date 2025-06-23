@@ -34,6 +34,7 @@ router.get('/', async (req, res) => {
           createdAt: item.createdAt,
           createdBy: item.createdBy,
           likes: item.likes || [],
+          readBy: item.readBy || [],
           answers: [],
         };
       }
@@ -54,7 +55,7 @@ router.get('/', async (req, res) => {
         if (!questionsMap[questionId]) {
           questionsMap[questionId] = {
             questionId,
-            text: '(שאלה לא נטענה עדיין)',
+            text: '(Question not loaded yet)',
             category: item.category || 'other',
             createdAt: null,
             createdBy: null,

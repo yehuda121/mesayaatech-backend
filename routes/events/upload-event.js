@@ -44,7 +44,7 @@ router.post('/', async (req, res) => {
 
     await ddb.send(command);
 
-    console.log('Event saved to DynamoDB successfully');
+    // console.log('Event saved to DynamoDB successfully');
     res.status(200).json({ message: 'Event saved successfully', eventId });
   } catch (err) {
     console.error('Error saving event to DynamoDB:', err);

@@ -2,6 +2,8 @@ const {
   BedrockRuntimeClient,
   InvokeModelCommand,
 } = require('@aws-sdk/client-bedrock-runtime');
+const fs = require('fs');
+const path = require('path');
 
 const client = new BedrockRuntimeClient({
   region: 'us-east-1',
@@ -11,36 +13,64 @@ const client = new BedrockRuntimeClient({
   },
 });
 
-function extractJsonFromText(text) {
-  try {
-    // Try parsing directly first
-    return JSON.parse(text);
-  } catch {
-    // Try cleaning code block tags like ```json ... ```
-    let cleaned = text.trim();
+// Load prompt templates from JSON file
+function getPromptText(category, difficulty, language) {
+  const promptsPath = path.join(__dirname, 'interview_prompts.json');
+  const prompts = JSON.parse(fs.readFileSync(promptsPath, 'utf-8'));
 
-    if (cleaned.startsWith("```json")) {
-      cleaned = cleaned.replace(/^```json/, '').replace(/```$/, '').trim();
-    } else if (cleaned.startsWith("```")) {
-      cleaned = cleaned.replace(/^```/, '').replace(/```$/, '').trim();
-    }
-
-    // Try to extract the first valid JSON object
-    const match = cleaned.match(/{[\s\S]*}/);
-    if (match) {
-      return JSON.parse(match[0]);
-    }
-
-    throw new Error("No valid JSON found");
+  if (prompts?.[category]?.[difficulty]?.[language]) {
+    return prompts[category][difficulty][language];
   }
+
+  throw new Error(`Prompt not found for ${category}/${difficulty}/${language}`);
 }
 
-async function evaluateUserAnswer(question, userAnswer, language) {
-  const prompt = `${language === 'he'
-    ? `אתה מראיין שמקבל את השאלה והתשובה של המועמד. החזר JSON בלבד עם המבנה {"score": מספר, "comments": {"positive": "...", "negative": "..."}, "example_answer": "..."}. אין להוסיף טקסט חיצוני.` 
-    : `You are an interviewer. Return only JSON in format {"score": number, "comments": {"positive": "...", "negative": "..."}, "example_answer": "..."}. No extra text.`}
+// Clean up smart quotes, asterisks, invisible characters, etc.
+function cleanJsonText(text) {
+  return text
+    .replace(/[“”]/g, '"')           // smart quotes
+    .replace(/[\u200B-\u200D\uFEFF]/g, '')  // invisible characters
+    .replace(/\*+/g, '')             // asterisks
+    .trim();
+}
 
-{"question": "${question}", "answer": "${userAnswer}"}`;
+// Parse structured plain text response from Claude
+function parseStructuredText(text) {
+  const scoreMatch = text.match(/score\s*[:=]\s*(\d+)/i);
+  const posMatch = text.match(/positive\s*[:=]\s*["']?(.+?)["']?(\n|$)/i);
+  const negMatch = text.match(/negative\s*[:=]\s*["']?(.+?)["']?(\n|$)/i);
+  const idealMatch = text.match(/ideal_answer\s*[:=]\s*["']?([\s\S]*?)["']?\s*$/i);
+
+  return {
+    score: scoreMatch ? parseInt(scoreMatch[1]) : 0,
+    feedback: {
+      positive: posMatch ? posMatch[1].trim() : '',
+      negative: negMatch ? negMatch[1].trim() : '',
+    },
+    idealAnswer: idealMatch ? idealMatch[1].trim() : '',
+  };
+}
+
+// Main logic to evaluate user's answer using Claude
+async function evaluateUserAnswer(question, userAnswer, language, category, difficulty) {
+  const promptText = getPromptText(category, difficulty, language);
+
+  const instruction = language === 'he'
+    ? `אל תצרף הסברים או תבניות Markdown. החזר טקסט פשוט בלבד. אם לא ניתן להשיב במבנה הנדרש, החזר טקסט ריק. ענה בפורמט הבא בלבד:
+    score: מספר בין 1 ל-10
+    comments:
+    positive: טקסט חיובי
+    negative: טקסט לשיפור
+    ideal_answer: תשובה לדוגמה`
+        : `Don't include explanations or Markdown. Respond in plain text only. If you cannot answer in the required structure, return an empty string. Use this exact format:
+    score: number between 1 and 10
+    comments:
+    positive: short positive feedback
+    negative: constructive feedback
+    ideal_answer: example of an ideal answer`;
+
+  const fullPrompt = `${promptText}\n\n${instruction}\n\nQuestion: ${question}\nAnswer: ${userAnswer}`;
+//   console.log("fullPrompt:", fullPrompt);
 
   const command = new InvokeModelCommand({
     modelId: 'anthropic.claude-3-haiku-20240307-v1:0',
@@ -48,30 +78,36 @@ async function evaluateUserAnswer(question, userAnswer, language) {
     accept: 'application/json',
     body: JSON.stringify({
       anthropic_version: 'bedrock-2023-05-31',
-      messages: [{ role: 'user', content: prompt }],
+      messages: [{ role: 'user', content: fullPrompt }],
       max_tokens: 1024,
     }),
   });
 
   const response = await client.send(command);
   const rawBody = await response.body.transformToString();
-  const responseBody = JSON.parse(rawBody);
-  const content = responseBody.content?.[0]?.text?.trim() || '';
+//   console.log('Raw model response:', rawBody);
+  const content = JSON.parse(rawBody).content?.[0]?.text?.trim() || '';
 
-  try {
-    const parsed = extractJsonFromText(content);
+  if (!content || content.length < 10) {
+    console.warn('Empty or too short response from Claude:', content);
     return {
-      score: parsed.score || 0,
+      score: 0,
       feedback: {
-        positive: parsed.comments?.positive || '',
-        negative: parsed.comments?.negative || '',
+        positive: '',
+        negative: 'The model returned an empty or invalid response.',
       },
-      idealAnswer: parsed.example_answer || '',
+      idealAnswer: '',
     };
-  } catch (err) {
-    console.error('Invalid JSON from Claude:', content);
-    throw new Error('Claude did not return valid JSON');
   }
+
+  const parsed = parseStructuredText(content);
+
+  return {
+    score: parsed.score,
+    feedback: parsed.feedback,
+    idealAnswer: parsed.idealAnswer,
+  };
 }
+
 
 module.exports = { evaluateUserAnswer };

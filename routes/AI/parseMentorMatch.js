@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { parseMatchPromptWithClaude } = require('./bedrockClient'); // ניצור פונקציה מקבילה
+const { parseMatchPromptWithClaude } = require('./bedrockClient'); 
 
 router.post('/', async (req, res) => {
   const { mentor, reservist } = req.body;
@@ -10,7 +10,7 @@ router.post('/', async (req, res) => {
 
   try {
     const result = await parseMatchPromptWithClaude(mentor, reservist);
-    res.json(result); // יכול להחזיר score, סיבות להתאמה, מילות מפתח תואמות, ועוד
+    res.json(result); 
   } catch (err) {
     console.error('Claude match error:', err);
     res.status(500).json({ error: 'Failed to evaluate match using Claude' });

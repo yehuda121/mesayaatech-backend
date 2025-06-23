@@ -21,7 +21,6 @@ router.post('/', async (req, res) => {
   if (!email) return res.status(400).json({ error: 'Missing email' });
 
   try {
-    // בדוק אם המשתמש קיים לפי האימייל
     const listCommand = new ListUsersCommand({
       UserPoolId: process.env.COGNITO_USER_POOL_ID,
       Filter: `email = "${email}"`,

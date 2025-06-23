@@ -13,6 +13,7 @@ const cognito = new CognitoIdentityProviderClient({
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
   }
 });
+
 const crypto = require('crypto');
 
 function generateSecretHash(username) {
@@ -25,38 +26,60 @@ function generateSecretHash(username) {
 router.post('/', async (req, res) => {
   const { email, password } = req.body;
 
+  // console.log('Received login request:');
+  // console.log('Email:', email);
+  // console.log('Password exists:', !!password);
+
   if (!email || !password) {
+    console.warn('Missing email or password');
     return res.status(400).json({ error: 'Email and password required' });
   }
 
   try {
+    const secretHash = generateSecretHash(email);
+
+    // console.log('Generated secret hash');
+    // console.log('Initiating auth with USER_PASSWORD_AUTH');
+
     const command = new InitiateAuthCommand({
       AuthFlow: 'USER_PASSWORD_AUTH',
       ClientId: process.env.COGNITO_CLIENT_ID,
       AuthParameters: {
         USERNAME: email,
         PASSWORD: password,
-        SECRET_HASH: generateSecretHash(email)
+        SECRET_HASH: secretHash
       }
     });
 
     const response = await cognito.send(command);
 
+    // console.log('Cognito response received');
+
     if (response.ChallengeName === 'NEW_PASSWORD_REQUIRED') {
+      console.warn('User requires NEW_PASSWORD_REQUIRED challenge');
       return res.status(200).json({
         challengeName: 'NEW_PASSWORD_REQUIRED',
         session: response.Session
       });
     }
 
-    const { AccessToken, IdToken } = response.AuthenticationResult;
+    const { AccessToken, IdToken, RefreshToken } = response.AuthenticationResult;
+
+    // console.log('Authentication successful');
+    // console.log('AccessToken present:', !!AccessToken);
+    // console.log('IdToken present:', !!IdToken);
+    // console.log('RefreshToken present:', !!RefreshToken);
 
     res.status(200).json({
       accessToken: AccessToken,
-      idToken: IdToken
+      idToken: IdToken,
+      refreshToken: RefreshToken
     });
   } catch (err) {
-    console.error('Login error:', err);
+    // console.error('Login error occurred:');
+    // console.error('Error type:', err.__type);
+    // console.error('Error message:', err.message);
+    // console.error('Full error:', err);
     res.status(401).json({
       error: 'Login failed',
       message: err.message || 'Unknown error'

@@ -34,7 +34,7 @@ async function parseJobTextWithClaude(inputText) {
   const responseBody = JSON.parse(rawBody);
   const content = responseBody.content?.[0]?.text || '{}';
 
-  console.log('Raw response from Claude:', content);
+  // console.log('Raw response from Claude:', content);
 
   try {
     return JSON.parse(content);

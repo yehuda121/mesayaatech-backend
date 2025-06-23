@@ -28,7 +28,17 @@ module.exports = async (req, res) => {
     const history = items
       .filter(item => item.answered)
       .sort((a, b) => a.SK.localeCompare(b.SK))
-      .map(item => ({ score: item.score }));
+      .map(item => ({
+        question: item.question,
+        userAnswer: item.userAnswer,
+        score: item.score,
+        feedback: item.feedback,
+        idealAnswer: item.idealAnswer,
+        date: item.date,
+        category: item.category,
+        difficulty: item.difficulty,
+        avgScore: item.avgScore
+    }));
 
     const todayCount = items.filter(item => item.SK.startsWith(`question#${today}`)).length;
 

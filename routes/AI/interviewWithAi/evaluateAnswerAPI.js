@@ -3,13 +3,13 @@ const { updateAnswerEvaluation } = require('./interviewService');
 
 module.exports = async (req, res) => {
   try {
-    const { userId, question, userAnswer, language } = req.body;
+    const { userId, question, userAnswer, language, category, difficulty } = req.body;
 
-    if (!userId || !question || !userAnswer || !language) {
+    if (!userId || !question || !userAnswer || !language || !category || !difficulty) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    const evaluation = await evaluateUserAnswer(question, userAnswer, language);
+    const evaluation = await evaluateUserAnswer(question, userAnswer, language, category, difficulty);
 
     await updateAnswerEvaluation(userId, {
       question,
