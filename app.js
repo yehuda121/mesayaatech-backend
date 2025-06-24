@@ -83,6 +83,17 @@ app.use('/api/reports/jobs-per-month', require('./routes/reports/jobs-per-month'
 app.use('/api/reports/events-per-month', require('./routes/reports/events-per-month'));
 app.use('/api/reports/events-participants-count', require('./routes/reports/events-participants-count'));
 
+// === emailAlerts / jobAlerts ===
+app.use('/api/jobAlerts/send-job-alerts', require('./routes/emailAlerts/jobAlerts/send-job-alerts'));
+app.use('/api/jobAlerts/add-subscriber', require('./routes/emailAlerts/jobAlerts/add-subscriber'));
+app.use('/api/jobAlerts/delete-subscriber', require('./routes/emailAlerts/jobAlerts/delete-subscriber'));
+app.use('/api/jobAlerts/get-subscribers', require('./routes/emailAlerts/jobAlerts/get-subscribers'));
+// === emailAlerts / eventAlerts ===
+// app.use('/api/eventAlerts/', require('./routes/emailAlerts/eventAlerts'));
+// app.use('/api/eventAlerts/', require('./routes/emailAlerts/eventAlerts'));
+// app.use('/api/eventAlerts/', require('./routes/emailAlerts/eventAlerts'));
+// app.use('/api/eventAlerts/', require('./routes/emailAlerts/eventAlerts'));
+
 // === Start server ===
 const PORT = 5000;
 app.listen(PORT, () => {
