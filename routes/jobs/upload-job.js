@@ -109,6 +109,23 @@ router.post('/', upload.single('attachment'), async (req, res) => {
       await ddb.send(command);
       // console.log("Job saved to DynamoDB:", jobId);
 
+      //added for the job send
+      try {
+        console.log("in the try");
+        // Send job alert email to subscribers
+        const res = await fetch('http://localhost:5000/api/jobAlerts/send-job-alerts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: `משרה חדשה פורסמה: ${role} בחברת ${company}.`,
+            fields: [req.body.field] 
+          })
+        });
+        console.log("sent", res);
+      } catch (mailErr) {
+        console.error("Failed to send job alert email:", mailErr.message);
+      }
+
       return res.status(200).json({ message: 'Job created successfully', jobId, attachmentUrl });
 
     } catch (ddbErr) {

@@ -8,7 +8,7 @@ const { unmarshall } = require("@aws-sdk/util-dynamodb");
 
 // Initialize AWS clients
 const ses = new SESClient({ region: "us-east-1" });
-const dynamo = new DynamoDBClient({ region: "us-east-1" });
+const dynamo = new DynamoDBClient({ region: "eu-north-1" });
 
 /**
  * Basic security check to prevent sending malicious content.
@@ -81,7 +81,7 @@ async function sendJobAlerts(message, relevantFields) {
           Data: "התראה על משרה חדשה שמתאימה לתחום שבחרת",
         },
       },
-      Source: "jobs@mesayaatech.org", // Make sure this is a verified sender in SES
+      Source: "mesayaatech@gmail.com", 
     };
 
     try {

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { DynamoDBClient, ScanCommand, GetItemCommand, PutItemCommand } = require('@aws-sdk/client-dynamodb');
 const { unmarshall, marshall } = require('@aws-sdk/util-dynamodb');
-const { parseMatchPromptWithClaude } = require('./bedrockClient');
+const { parseMatchPromptWithClaude } = require('../jobAutoFill/bedrockClient');
 
 const db = new DynamoDBClient({
   region: 'eu-north-1',

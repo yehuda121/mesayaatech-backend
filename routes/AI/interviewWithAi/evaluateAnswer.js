@@ -57,20 +57,19 @@ async function evaluateUserAnswer(question, userAnswer, language, category, diff
 
   const instruction = language === 'he'
     ? `אל תצרף הסברים או תבניות Markdown. החזר טקסט פשוט בלבד. אם לא ניתן להשיב במבנה הנדרש, החזר טקסט ריק. ענה בפורמט הבא בלבד:
-    score: מספר בין 1 ל-10
+    score: מספר בין 1 ל-10 שבאמת משקף את הציון של התשובה על השאלה
     comments:
-    positive: טקסט חיובי
-    negative: טקסט לשיפור
-    ideal_answer: תשובה לדוגמה`
+    positive: טקסט חיובי על התשובה (תמלא רק אם זה רלוונטי)
+    negative: טקסט שלילי על התשובה (תמלא רק אם זה רלוונטי)
+    ideal_answer: תשובה שלך על השאלה, תשובה אידיאלית וקצרה`
         : `Don't include explanations or Markdown. Respond in plain text only. If you cannot answer in the required structure, return an empty string. Use this exact format:
-    score: number between 1 and 10
+    score: A number between 1 and 10 that truly reflects the score of the answer to the question
     comments:
-    positive: short positive feedback
-    negative: constructive feedback
-    ideal_answer: example of an ideal answer`;
+    positive: short positive feedback (Fill in only if relevant)
+    negative: constructive feedback (Fill in only if relevant)
+    ideal_answer: Your answer to the question, which should be ideally and short and to the point`;
 
   const fullPrompt = `${promptText}\n\n${instruction}\n\nQuestion: ${question}\nAnswer: ${userAnswer}`;
-//   console.log("fullPrompt:", fullPrompt);
 
   const command = new InvokeModelCommand({
     modelId: 'anthropic.claude-3-haiku-20240307-v1:0',

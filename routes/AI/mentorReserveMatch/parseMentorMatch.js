@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { parseMatchPromptWithClaude } = require('./bedrockClient'); 
+const { parseMatchPromptWithClaude } = require('../jobAutoFill/bedrockClient'); 
 
 router.post('/', async (req, res) => {
   const { mentor, reservist } = req.body;

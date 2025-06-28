@@ -30,14 +30,14 @@ function buildMatchPrompt(mentor, reservist) {
   return `
 You are an assistant that evaluates how well a mentor matches a reservist.
 
-### MENTOR DETAILS:
+MENTOR DETAILS:
 - Full Name: ${mentor.fullName}
 - Profession: ${mentor.profession}
 - Location: ${mentor.location}
 - Specialties (areas they can help with): ${Array.isArray(mentor.specialties) ? mentor.specialties.join(', ') : mentor.specialties || ''}
 - Description/About Me: ${mentor.aboutMe || ''}
 
-### RESERVIST DETAILS:
+RESERVIST DETAILS:
 - Full Name: ${reservist.fullName}
 - Interested Fields: ${Array.isArray(reservist.fields) ? reservist.fields.join(', ') : reservist.fields || ''}
 - Location: ${reservist.location}
@@ -60,8 +60,5 @@ Evaluate the match and return a JSON with the following structure:
 Respond ONLY with valid JSON and make sure the score breakdown values add up to matchScore.
 `;
 }
-
-
-
 
 module.exports = { buildPrompt, buildMatchPrompt };

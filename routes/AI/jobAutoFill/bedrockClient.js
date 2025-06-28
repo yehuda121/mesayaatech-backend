@@ -2,7 +2,7 @@ const {
   BedrockRuntimeClient,
   InvokeModelCommand,
 } = require('@aws-sdk/client-bedrock-runtime');
-const { buildPrompt, buildMatchPrompt  } = require('./promptBuilder');
+const { buildPrompt, buildMatchPrompt  } = require('../mentorReserveMatch/promptBuilder');
 
 const client = new BedrockRuntimeClient({
   region: 'us-east-1',

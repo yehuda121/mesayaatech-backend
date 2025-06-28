@@ -13,7 +13,7 @@ app.use('/api/delete-job', require('./routes/jobs/delete-job'));
 app.use('/api/update-job', require('./routes/jobs/update-job'));
 app.use('/api/jobs-by-publisherID', require('./routes/jobs/get-jobs-by-publisherID'));
 
-// === Interview Questions routes ===
+// === Interview Questions ===
 app.use('/api/upload-question', require('./routes/interviewQuestions/upload-question'));
 app.use('/api/post-answer', require('./routes/interviewQuestions/post-answer'));
 app.use('/api/get-questions', require('./routes/interviewQuestions/get-questions'));
@@ -51,10 +51,11 @@ app.use('/api/forgot-password', require('./routes/login/forgot-password'));
 app.use('/api/confirm-forgot-password', require('./routes/login/confirm-forgot-password'));
 app.use('/api/change-password', require('./routes/login/change-password'));
 
-// === AI ===
-app.use('/api/parse-job-text', require('./routes/AI/parseJobText'));
-app.use('/api/extract-image-text', require('./routes/AI/extractImageText'));
-app.use('/api/match-reservists-to-mentor', require('./routes/AI/match-reservists-to-mentor'));
+// === AI jobAutoFill ===
+app.use('/api/parse-job-text', require('./routes/AI/jobAutoFill/parseJobText'));
+app.use('/api/extract-image-text', require('./routes/AI/jobAutoFill/extractImageText'));
+// === AI mentorReserveMatch ===
+app.use('/api/match-reservists-to-mentor', require('./routes/AI/mentorReserveMatch/match-reservists-to-mentor'));
 // === Interview AI ===
 app.use('/api/interview/evaluateAnswer', require('./routes/AI/interviewWithAi/evaluateAnswerAPI'));
 app.use('/api/interview/getQuestion', require('./routes/AI/interviewWithAi/getQuestionAPI'));

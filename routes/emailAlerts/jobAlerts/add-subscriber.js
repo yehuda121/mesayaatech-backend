@@ -1,4 +1,5 @@
 // add-subscriber.js
+require('dotenv').config();
 
 const express = require("express");
 const router = express.Router();
@@ -6,8 +7,13 @@ const { DynamoDBClient, GetItemCommand, PutItemCommand } = require("@aws-sdk/cli
 const { marshall } = require("@aws-sdk/util-dynamodb");
 
 // Initialize the DynamoDB client for the us-east-1 region
-const dynamo = new DynamoDBClient({ region: "us-east-1" });
-
+const dynamo = new DynamoDBClient({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  }
+});
 /**
  * Adds a new subscriber to the "jobAlertsSubscribers" DynamoDB table.
  * Ensures the subscriber does not already exist (based on ID number).
