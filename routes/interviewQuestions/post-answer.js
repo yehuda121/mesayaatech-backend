@@ -15,7 +15,7 @@ const ddb = new DynamoDBClient({
 });
 
 router.post('/', async (req, res) => {
-  const { questionId, text, fullName, idNumber } = req.body;
+  const { questionId, text, fullName, idNumber,  userType } = req.body;
 
   if (!questionId || !text?.trim() || !fullName || !idNumber) {
     return res.status(400).json({ error: 'Missing required fields' });
