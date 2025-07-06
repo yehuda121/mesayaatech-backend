@@ -29,7 +29,7 @@ router.post('/', async (req, res) => {
     SK: `answer#${answerId}`,
     answerId,
     text: text?.trim(),
-    answeredBy: `${fullName}#${idNumber}`,
+    answeredBy: `${userType}#${idNumber}`,
     answeredName: fullName,
     createdAt
   };
