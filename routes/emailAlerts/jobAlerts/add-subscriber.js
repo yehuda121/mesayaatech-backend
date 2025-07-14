@@ -1,4 +1,3 @@
-// add-subscriber.js
 require('dotenv').config();
 
 const express = require("express");
@@ -14,11 +13,13 @@ const dynamo = new DynamoDBClient({
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   }
 });
+
 /**
- * Adds a new subscriber to the "jobAlertsSubscribers" DynamoDB table.
- * Ensures the subscriber does not already exist (based on ID number).
+ * Adds or updates a subscriber in the "jobAlertsSubscribers" DynamoDB table.
+ * - If the subscriber does not exist: create a new record.
+ * - If the subscriber exists: overwrite with new fields (only if there are fieldsOfInterest).
  *
- * @param {Object} subscriber - The subscriber object to add
+ * @param {Object} subscriber - The subscriber object
  * @param {string} subscriber.idNumber - The national ID of the user (used to generate the PK)
  * @param {string} subscriber.fullName - Full name of the user
  * @param {string} subscriber.email - Email address of the user
@@ -42,11 +43,30 @@ async function addSubscriber(subscriber) {
   };
 
   const existing = await dynamo.send(new GetItemCommand(getParams));
+
+  // If subscriber exists, update it only if new fields are provided
   if (existing.Item) {
-    throw new Error("Subscriber already exists.");
+    if (fieldsOfInterest.length === 0) {
+      throw new Error("Cannot update subscriber without at least one field of interest.");
+    }
+
+    const putParams = {
+      TableName: "jobAlertsSubscribers",
+      Item: marshall({
+        PK: pk,
+        fullName,
+        email,
+        fieldsOfInterest,
+        updatedAt: new Date().toISOString(),
+      }),
+    };
+
+    await dynamo.send(new PutItemCommand(putParams));
+    console.log("Subscriber updated:", email);
+    return;
   }
 
-  // Add the new subscriber to the table
+  // If subscriber does not exist, create a new record
   const putParams = {
     TableName: "jobAlertsSubscribers",
     Item: marshall({
@@ -59,7 +79,7 @@ async function addSubscriber(subscriber) {
   };
 
   await dynamo.send(new PutItemCommand(putParams));
-  console.log("Subscriber added:", email);
+  // console.log("Subscriber created:", email);
 }
 
 // Handle POST /api/jobAlerts/add-subscriber
