@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const verifyToken = require('../../utils/verifyToken');
 const {
   CognitoIdentityProviderClient,
   AdminCreateUserCommand
@@ -15,7 +16,7 @@ const cognito = new CognitoIdentityProviderClient({
   }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', verifyToken, async (req, res) => {
     const { email, name, role, idNumber } = req.body;
 
   // Validate input

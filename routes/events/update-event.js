@@ -5,9 +5,8 @@ const {
   UpdateItemCommand
 } = require('@aws-sdk/client-dynamodb');
 const { marshall } = require('@aws-sdk/util-dynamodb');
-
 require('dotenv').config();
-
+const verifyToken = require('../../utils/verifyToken');
 const ddb = new DynamoDBClient({
   region: 'eu-north-1',
   credentials: {
@@ -16,7 +15,7 @@ const ddb = new DynamoDBClient({
   },
 });
 
-router.post('/', async (req, res) => {
+router.post('/', verifyToken, async (req, res) => {
   try {
     const { eventId, updatedData } = req.body;
     if (!eventId || !updatedData) return res.status(400).json({ error: 'Missing eventId or data' });

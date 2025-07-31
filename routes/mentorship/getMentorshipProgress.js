@@ -3,11 +3,11 @@ const express = require('express');
 const { DynamoDBClient, GetItemCommand } = require('@aws-sdk/client-dynamodb');
 const { unmarshall } = require('@aws-sdk/util-dynamodb');
 require('dotenv').config();
-
+const verifyToken = require('../../utils/verifyToken');
 const router = express.Router();
 const ddb = new DynamoDBClient({ region: 'eu-north-1' });
 
-router.get('/', async (req, res) => {
+router.get('/', verifyToken, async (req, res) => {
   const { mentorId, reservistId } = req.query;
   if (!mentorId || !reservistId) return res.status(400).json({ error: 'Missing IDs' });
 

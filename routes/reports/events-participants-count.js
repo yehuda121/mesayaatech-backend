@@ -6,7 +6,7 @@ const {
 } = require('@aws-sdk/client-dynamodb');
 const { unmarshall } = require('@aws-sdk/util-dynamodb');
 require('dotenv').config();
-
+const verifyToken = require('../../utils/verifyToken');
 const ddb = new DynamoDBClient({
   region: 'eu-north-1',
   credentials: {
@@ -15,7 +15,7 @@ const ddb = new DynamoDBClient({
   },
 });
 
-router.get('/', async (req, res) => {
+router.get('/', verifyToken, async (req, res) => {
   try {
     // console.log('Starting scan for events with SK = metadata');
 

@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const { DynamoDBClient, DeleteItemCommand } = require('@aws-sdk/client-dynamodb');
 require('dotenv').config();
-
+const verifyToken = require('../../utils/verifyToken');
 const db = new DynamoDBClient({
   region: 'eu-north-1',
   credentials: {
@@ -12,7 +12,7 @@ const db = new DynamoDBClient({
   },
 });
 
-router.post('/', async (req, res) => {
+router.post('/',verifyToken, async (req, res) => {
   const { userType, idNumber } = req.body;
 
   if (!userType || !idNumber) {

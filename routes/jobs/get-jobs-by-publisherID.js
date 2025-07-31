@@ -2,9 +2,8 @@ const express = require('express');
 const { DynamoDBClient, QueryCommand } = require('@aws-sdk/client-dynamodb');
 const { unmarshall } = require('@aws-sdk/util-dynamodb');
 require('dotenv').config();
-
 const router = express.Router();
-
+const verifyToken = require('../../utils/verifyToken');
 const ddb = new DynamoDBClient({
   region: 'eu-north-1',
   credentials: {
@@ -14,7 +13,7 @@ const ddb = new DynamoDBClient({
 });
 
 
-router.get('/by-publisher', async (req, res) => {
+router.get('/by-publisher', verifyToken, async (req, res) => {
   const { publisherId, idType } = req.query;
 
   if (!publisherId || !idType) {

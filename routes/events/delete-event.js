@@ -5,9 +5,8 @@ const {
   DeleteItemCommand,
 } = require('@aws-sdk/client-dynamodb');
 const { marshall } = require('@aws-sdk/util-dynamodb');
-
+const verifyToken = require('../../utils/verifyToken');
 require('dotenv').config();
-
 const ddb = new DynamoDBClient({
   region: 'eu-north-1',
   credentials: {
@@ -16,7 +15,7 @@ const ddb = new DynamoDBClient({
   },
 });
 
-router.post('/', async (req, res) => {
+router.post('/', verifyToken, async (req, res) => {
   try {
     const { eventId } = req.body;
     if (!eventId) return res.status(400).json({ error: 'Missing eventId' });

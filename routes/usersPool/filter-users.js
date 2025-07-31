@@ -2,7 +2,7 @@ const express = require('express');
 const { DynamoDBClient, ScanCommand, QueryCommand } = require('@aws-sdk/client-dynamodb');
 const { unmarshall } = require('@aws-sdk/util-dynamodb');
 require('dotenv').config();
-
+const verifyToken = require('../../utils/verifyToken');
 const router = express.Router();
 
 const db = new DynamoDBClient({
@@ -19,7 +19,7 @@ const tableNameMap = {
   ambassador: 'ambassadorUserForms',
 };
 
-router.get('/', async (req, res) => {
+router.get('/', verifyToken, async (req, res) => {
   const { userType, status, idNumber, email, filter } = req.query;
 
   const cleanType = (userType || '').toLowerCase();

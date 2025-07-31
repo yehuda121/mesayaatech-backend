@@ -2,8 +2,8 @@ const express = require('express');
 const { DynamoDBClient, ScanCommand } = require('@aws-sdk/client-dynamodb');
 const { unmarshall } = require('@aws-sdk/util-dynamodb');
 require('dotenv').config();
-
 const router = express.Router();
+const verifyToken = require('../../utils/verifyToken');
 
 const ddb = new DynamoDBClient({
   region: 'eu-north-1',
@@ -13,7 +13,7 @@ const ddb = new DynamoDBClient({
   },
 });
 
-router.get('/', async (req, res) => {
+router.get('/', verifyToken, async (req, res) => {
   const { mentorId } = req.query;
 
   if (!mentorId) {

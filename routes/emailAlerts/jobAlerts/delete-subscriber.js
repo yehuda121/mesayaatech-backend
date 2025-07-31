@@ -5,7 +5,7 @@ const express = require("express");
 const router = express.Router();
 const { DynamoDBClient, DeleteItemCommand } = require("@aws-sdk/client-dynamodb");
 const { marshall } = require("@aws-sdk/util-dynamodb");
-
+const verifyToken = require('../../../utils/verifyToken');
 // Initialize DynamoDB client for the relevant region
 const dynamo = new DynamoDBClient({
   region: process.env.AWS_REGION,
@@ -43,7 +43,7 @@ async function deleteSubscriber(idNumber) {
 }
 
 // Handle POST /api/jobAlerts/delete-subscriber
-router.post("/", async (req, res) => {
+router.post("/", verifyToken, async (req, res) => {
   const { idNumber } = req.body;
   try {
     await deleteSubscriber(idNumber);

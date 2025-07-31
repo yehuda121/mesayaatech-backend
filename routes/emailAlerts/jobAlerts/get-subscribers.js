@@ -5,7 +5,7 @@ const express = require("express");
 const router = express.Router();
 const { DynamoDBClient, ScanCommand } = require("@aws-sdk/client-dynamodb");
 const { unmarshall } = require("@aws-sdk/util-dynamodb");
-
+const verifyToken = require('../../../utils/verifyToken');
 // Initialize DynamoDB client
 const dynamo = new DynamoDBClient({
   region: process.env.AWS_REGION,
@@ -40,7 +40,7 @@ async function getSubscribers(filters = {}) {
       return true;
     });
 
-    console.log(`Retrieved ${filtered.length} matching subscribers.`);
+    // console.log(`Retrieved ${filtered.length} matching subscribers.`);
     return filtered;
   } catch (err) {
     console.error("Error retrieving subscribers:", err);
@@ -49,7 +49,7 @@ async function getSubscribers(filters = {}) {
 }
  
 // Handle GET /api/jobAlerts/get-subscribers with optional query parameters
-router.get("/", async (req, res) => {
+router.get("/", verifyToken, async (req, res) => {
   try {
     const filters = {
       idNumber: req.query.idNumber,

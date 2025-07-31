@@ -3,7 +3,7 @@ const router = express.Router();
 const { DynamoDBClient, ScanCommand, GetItemCommand, PutItemCommand } = require('@aws-sdk/client-dynamodb');
 const { unmarshall, marshall } = require('@aws-sdk/util-dynamodb');
 const { parseMatchPromptWithClaude } = require('../jobAutoFill/bedrockClient');
-
+const verifyToken = require('../../../utils/verifyToken');
 const db = new DynamoDBClient({
   region: 'eu-north-1',
   credentials: {
@@ -12,7 +12,7 @@ const db = new DynamoDBClient({
   },
 });
 
-router.get('/', async (req, res) => {
+router.get('/', verifyToken, async (req, res) => {
   const { mentorId } = req.query;
   if (!mentorId) return res.status(400).json({ error: 'Missing mentorId' });
 

@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const { parseMatchPromptWithClaude } = require('../jobAutoFill/bedrockClient'); 
+const verifyToken = require('../../../utils/verifyToken');
 
-router.post('/', async (req, res) => {
+router.post('/', verifyToken, async (req, res) => {
   const { mentor, reservist } = req.body;
   if (!mentor || !reservist) {
     return res.status(400).json({ error: 'Missing mentor or reservist data' });

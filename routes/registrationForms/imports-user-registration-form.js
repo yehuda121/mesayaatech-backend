@@ -4,7 +4,7 @@ const { unmarshall } = require('@aws-sdk/util-dynamodb');
 const router = express.Router();
 
 require('dotenv').config();
-
+const verifyToken = require('../../utils/verifyToken');
 const db = new DynamoDBClient({
   region: 'eu-north-1',
   credentials: {
@@ -39,7 +39,7 @@ router.get('/all', async (req, res) => {
   }
 });
 
-router.get('/', async (req, res) => {
+router.get('/', verifyToken, async (req, res) => {
   const { userType, status } = req.query;
 
   const cleanType = (userType || '').toLowerCase();

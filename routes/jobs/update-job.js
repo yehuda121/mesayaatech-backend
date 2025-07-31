@@ -3,7 +3,7 @@ const router = express.Router();
 const { DynamoDBClient, UpdateItemCommand } = require('@aws-sdk/client-dynamodb');
 const { marshall } = require('@aws-sdk/util-dynamodb');
 require('dotenv').config();
-
+const verifyToken = require('../../utils/verifyToken');
 const ddb = new DynamoDBClient({
   region: 'eu-north-1',
   credentials: {
@@ -12,7 +12,7 @@ const ddb = new DynamoDBClient({
   },
 });
 
-router.post('/', async (req, res) => {
+router.post('/', verifyToken, async (req, res) => {
   try {
     const { jobId, updatedData, userId, userType } = req.body;
 

@@ -1,0 +1,12 @@
+.env
+.env.local
+.env.development
+*.pem
+*.key
+*.crt
+node_modules
+.git
+.gitignore
+README.md
+Dockerfile
+docker-compose.yml

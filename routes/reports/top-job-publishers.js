@@ -2,10 +2,10 @@ const express = require('express');
 const router = express.Router();
 const { DynamoDBClient, ScanCommand } = require('@aws-sdk/client-dynamodb');
 const { unmarshall } = require('@aws-sdk/util-dynamodb');
-
+const verifyToken = require('../../utils/verifyToken');
 const ddb = new DynamoDBClient({ region: 'eu-north-1' });
 
-router.get('/', async (req, res) => {
+router.get('/', verifyToken, async (req, res) => {
   try {
     const jobsData = await ddb.send(new ScanCommand({ TableName: 'Jobs' }));
     const jobs = jobsData.Items.map(unmarshall);

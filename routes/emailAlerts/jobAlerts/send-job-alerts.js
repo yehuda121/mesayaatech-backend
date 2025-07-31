@@ -5,7 +5,7 @@ const router = express.Router();
 const { SESClient, SendEmailCommand } = require("@aws-sdk/client-ses");
 const { DynamoDBClient, ScanCommand } = require("@aws-sdk/client-dynamodb");
 const { unmarshall } = require("@aws-sdk/util-dynamodb");
-
+const verifyToken = require('../../../utils/verifyToken');
 // Initialize AWS clients
 const ses = new SESClient({ region: "us-east-1" });
 const dynamo = new DynamoDBClient({ region: "eu-north-1" });
@@ -94,7 +94,7 @@ async function sendJobAlerts(message, relevantFields) {
 }
 
 // Handle POST /api/jobAlerts/send-job-alerts
-router.post("/", async (req, res) => {
+router.post("/", verifyToken, async (req, res) => {
   const { message, fields } = req.body;
 
   if (!message || !Array.isArray(fields)) {

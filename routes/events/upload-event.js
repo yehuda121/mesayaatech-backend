@@ -3,9 +3,8 @@ const router = express.Router();
 const { DynamoDBClient, PutItemCommand } = require('@aws-sdk/client-dynamodb');
 const { marshall } = require('@aws-sdk/util-dynamodb');
 const { v4: uuidv4 } = require('uuid'); 
-
 require('dotenv').config();
-
+const verifyToken = require('../../utils/verifyToken');
 const ddb = new DynamoDBClient({
   region: 'eu-north-1',
   credentials: {
@@ -14,7 +13,7 @@ const ddb = new DynamoDBClient({
   },
 });
 
-router.post('/', async (req, res) => {
+router.post('/', verifyToken, async (req, res) => {
   try {
     const event = req.body;
 

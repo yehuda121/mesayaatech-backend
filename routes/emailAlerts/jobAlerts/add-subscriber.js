@@ -4,7 +4,7 @@ const express = require("express");
 const router = express.Router();
 const { DynamoDBClient, GetItemCommand, PutItemCommand } = require("@aws-sdk/client-dynamodb");
 const { marshall } = require("@aws-sdk/util-dynamodb");
-
+const verifyToken = require('../../../utils/verifyToken');
 // Initialize the DynamoDB client for the us-east-1 region
 const dynamo = new DynamoDBClient({
   region: process.env.AWS_REGION,
@@ -83,7 +83,7 @@ async function addSubscriber(subscriber) {
 }
 
 // Handle POST /api/jobAlerts/add-subscriber
-router.post("/", async (req, res) => {
+router.post("/", verifyToken, async (req, res) => {
   try {
     await addSubscriber(req.body);
     res.json({ success: true });

@@ -2,9 +2,8 @@ const express = require('express');
 const { DynamoDBClient, ScanCommand } = require('@aws-sdk/client-dynamodb');
 const { unmarshall } = require('@aws-sdk/util-dynamodb');
 require('dotenv').config();
-
 const router = express.Router();
-
+const verifyToken = require('../../utils/verifyToken');
 const ddb = new DynamoDBClient({
   region: 'eu-north-1',
   credentials: {
@@ -19,7 +18,7 @@ const normalizeDate = (dateStr) => {
   return date.toISOString().split('T')[0];
 };
 
-router.get('/', async (req, res) => {
+router.get('/', verifyToken, async (req, res) => {
   const { from, to, title, includePast } = req.query;
 
   try {

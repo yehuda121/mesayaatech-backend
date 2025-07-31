@@ -7,8 +7,7 @@ const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 const router = express.Router();
 require('dotenv').config();
-
-// AWS S3 client
+const verifyToken = require('../../utils/verifyToken');
 const s3 = new S3Client({
   region: 'eu-north-1',
   credentials: {
@@ -31,14 +30,10 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 // POST /api/jobs
-router.post('/', upload.single('attachment'), async (req, res) => {
+router.post('/', verifyToken, upload.single('attachment'), async (req, res) => {
   // console.log("Received job submission");
 
   try {
-    // Debug logs
-    // console.log("BODY:", req.body);
-    // console.log("FILE:", req.file);
-
     const jobId = uuidv4();
     const {
       company, location, role, minExperience, description,
@@ -56,10 +51,8 @@ router.post('/', upload.single('attachment'), async (req, res) => {
 
     // If a file is attached, upload it to S3
     if (req.file) {
-      // console.log("Uploading file to S3...");
-
       const fileExt = path.extname(req.file.originalname);
-      const key = `jobs/${jobId}${fileExt}`; // <- make sure prefix matches bucket expectation
+      const key = `jobs/${jobId}${fileExt}`;
 
       const uploadParams = {
         Bucket: process.env.S3_BUCKET_NAME,
@@ -111,7 +104,6 @@ router.post('/', upload.single('attachment'), async (req, res) => {
 
       //added for the job send
       try {
-        console.log("in the try");
         // Send job alert email to subscribers
         const res = await fetch('http://localhost:5000/api/jobAlerts/send-job-alerts', {
           method: 'POST',

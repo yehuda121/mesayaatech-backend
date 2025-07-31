@@ -2,14 +2,14 @@ const express = require('express');
 const { DynamoDBClient, UpdateItemCommand, GetItemCommand } = require('@aws-sdk/client-dynamodb');
 const { marshall, unmarshall } = require('@aws-sdk/util-dynamodb');
 require('dotenv').config();
-
+const verifyToken = require('../../utils/verifyToken');
 const router = express.Router();
 const ddb = new DynamoDBClient({ region: 'eu-north-1', credentials: {
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
 }});
 
-router.post('/', async (req, res) => {
+router.post('/', verifyToken, async (req, res) => {
   const { questionId, answerId, updatedText, userId, userType } = req.body;
   if (!questionId || !answerId || !updatedText || !userId || !userType)
     return res.status(400).json({ error: 'Missing fields' });

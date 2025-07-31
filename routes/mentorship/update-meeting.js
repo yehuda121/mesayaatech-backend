@@ -3,10 +3,10 @@ const express = require('express');
 const { DynamoDBClient, UpdateItemCommand } = require('@aws-sdk/client-dynamodb');
 const { marshall } = require('@aws-sdk/util-dynamodb');
 const router = express.Router();
-
+const verifyToken = require('../../utils/verifyToken');
 const ddb = new DynamoDBClient({ region: 'eu-north-1' });
 
-router.post('/', async (req, res) => {
+router.post('/', verifyToken, async (req, res) => {
   const { mentorId, reservistId, meetingIndex, updatedMeeting } = req.body;
   if (!mentorId || !reservistId || meetingIndex === undefined || !updatedMeeting) {
     return res.status(400).json({ error: 'Missing data' });

@@ -2,9 +2,8 @@ const express = require('express');
 const { DynamoDBClient, UpdateItemCommand } = require('@aws-sdk/client-dynamodb');
 const { marshall } = require('@aws-sdk/util-dynamodb');
 require('dotenv').config();
-
 const router = express.Router();
-
+const verifyToken = require('../../utils/verifyToken');
 const ddb = new DynamoDBClient({
   region: 'eu-north-1',
   credentials: {
@@ -14,7 +13,7 @@ const ddb = new DynamoDBClient({
 });
 
 // PUT /api/update-question
-router.put('/', async (req, res) => {
+router.put('/', verifyToken, async (req, res) => {
   const { questionId, text, category } = req.body;
 
   if (!questionId || !text || !category) {

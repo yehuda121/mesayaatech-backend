@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const verifyToken = require('../../utils/verifyToken');
 const {
   CognitoIdentityProviderClient,
   AdminDeleteUserCommand,
@@ -15,7 +16,7 @@ const cognito = new CognitoIdentityProviderClient({
   }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', verifyToken, async (req, res) => {
   const { email } = req.body;
 
   if (!email) return res.status(400).json({ error: 'Missing email' });

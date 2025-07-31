@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const { DynamoDBClient, ScanCommand } = require('@aws-sdk/client-dynamodb');
 const { unmarshall } = require('@aws-sdk/util-dynamodb');
-
+const verifyToken = require('../../utils/verifyToken');
 const ddb = new DynamoDBClient({ region: 'eu-north-1' });
 
 function getMonthKey(dateString) {
@@ -11,7 +11,7 @@ function getMonthKey(dateString) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
 }
 
-router.get('/', async (req, res) => {
+router.get('/', verifyToken, async (req, res) => {
     try {
         const jobsData = await ddb.send(new ScanCommand({ TableName: 'Jobs' }));
         const jobs = jobsData.Items.map(unmarshall);

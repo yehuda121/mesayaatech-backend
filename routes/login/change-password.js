@@ -5,7 +5,7 @@ const {
   ChangePasswordCommand
 } = require('@aws-sdk/client-cognito-identity-provider');
 require('dotenv').config();
-
+const verifyToken = require('../../utils/verifyToken');
 const cognito = new CognitoIdentityProviderClient({
   region: 'eu-north-1',
   credentials: {
@@ -14,8 +14,7 @@ const cognito = new CognitoIdentityProviderClient({
   }
 });
 
-// החלפת סיסמה למשתמש מחובר
-router.post('/', async (req, res) => {
+router.post('/', verifyToken, async (req, res) => {
   const authHeader = req.headers.authorization;
   const { currentPassword, newPassword } = req.body;
 

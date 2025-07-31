@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const { parseJobTextWithClaude } = require('./bedrockClient');
+const verifyToken = require('../../../utils/verifyToken');
 
-router.post('/', async (req, res) => {
+router.post('/', verifyToken, async (req, res) => {
   const { text } = req.body;
   if (!text) return res.status(400).json({ error: 'Text is required' });
 

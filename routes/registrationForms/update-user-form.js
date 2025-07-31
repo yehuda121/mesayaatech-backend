@@ -4,7 +4,7 @@ const router = express.Router();
 const { DynamoDBClient, PutItemCommand } = require('@aws-sdk/client-dynamodb');
 const { marshall } = require('@aws-sdk/util-dynamodb');
 require('dotenv').config();
-
+const verifyToken = require('../../utils/verifyToken');
 const db = new DynamoDBClient({
   region: 'eu-north-1',
   credentials: {
@@ -19,7 +19,7 @@ const tableNameMap = {
   ambassador: 'ambassadorUserForms',
 };
 
-router.post('/', async (req, res) => {
+router.post('/', verifyToken, async (req, res) => {
   const formData = req.body;
   const { userType, idNumber } = formData;
 

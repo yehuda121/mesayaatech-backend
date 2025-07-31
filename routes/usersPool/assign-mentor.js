@@ -1,7 +1,7 @@
 const express = require('express');
 const { DynamoDBClient, UpdateItemCommand, GetItemCommand } = require('@aws-sdk/client-dynamodb');
 require('dotenv').config();
-
+const verifyToken = require('../../utils/verifyToken');
 const router = express.Router();
 
 const db = new DynamoDBClient({
@@ -12,7 +12,7 @@ const db = new DynamoDBClient({
   },
 });
 
-router.post('/', async (req, res) => {
+router.post('/', verifyToken, async (req, res) => {
   const { mentorId, reservistId } = req.body;
 
   if (!mentorId || !reservistId) {

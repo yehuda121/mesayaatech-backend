@@ -2,11 +2,11 @@
 const express = require('express');
 const { DynamoDBClient, GetItemCommand, PutItemCommand } = require('@aws-sdk/client-dynamodb');
 const { marshall, unmarshall } = require('@aws-sdk/util-dynamodb');
-
+const verifyToken = require('../../utils/verifyToken');
 const router = express.Router();
 const ddb = new DynamoDBClient({ region: 'eu-north-1' });
 
-router.post('/', async (req, res) => {
+router.post('/',verifyToken, async (req, res) => {
   const { mentorId, reservistId } = req.body;
 
   if (!mentorId || !reservistId) {
