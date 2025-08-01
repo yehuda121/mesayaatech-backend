@@ -62,7 +62,7 @@ async function evaluateUserAnswer(question, userAnswer, language, category, diff
     positive: טקסט חיובי על התשובה (תמלא רק אם זה רלוונטי)
     negative: טקסט שלילי על התשובה (תמלא רק אם זה רלוונטי)
     ideal_answer: תשובה שלך על השאלה, תשובה אידיאלית וקצרה`
-        : `Don't include explanations or Markdown. Respond in plain text only. If you cannot answer in the required structure, return an empty string. Use this exact format:
+      : `Don't include explanations or Markdown. Respond in plain text only. If you cannot answer in the required structure, return an empty string. Use this exact format:
     score: A number between 1 and 10 that truly reflects the score of the answer to the question
     comments:
     positive: short positive feedback (Fill in only if relevant)

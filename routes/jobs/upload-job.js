@@ -92,6 +92,14 @@ router.post('/', verifyToken, upload.single('attachment'), async (req, res) => {
       postedAt: new Date().toISOString(),
       attachmentUrl,
     };
+    // Only add minExperience if it's a valid number
+    if (minExperience !== '' && !isNaN(minExperience)) {
+      item.minExperience = parseInt(minExperience);
+    }
+    // Only add field if exists (you send it via req.body.field)
+    if (req.body.field) {
+      item.field = req.body.field;
+    }
 
     try {
       const command = new PutItemCommand({
