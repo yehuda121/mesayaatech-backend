@@ -5,7 +5,7 @@ const { DynamoDBClient, DeleteItemCommand } = require('@aws-sdk/client-dynamodb'
 require('dotenv').config();
 const verifyToken = require('../../utils/verifyToken');
 const db = new DynamoDBClient({
-  region: 'eu-north-1',
+  region: process.env.AWS_REGION_EU,
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,

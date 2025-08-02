@@ -5,7 +5,7 @@ const { unmarshall, marshall } = require('@aws-sdk/util-dynamodb');
 const { parseMatchPromptWithClaude } = require('../jobAutoFill/bedrockClient');
 const verifyToken = require('../../../utils/verifyToken');
 const db = new DynamoDBClient({
-  region: 'eu-north-1',
+  region: process.env.AWS_REGION_EU,
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,

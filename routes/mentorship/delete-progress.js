@@ -1,7 +1,7 @@
 const express = require('express');
 const { DynamoDBClient, DeleteItemCommand, UpdateItemCommand } = require('@aws-sdk/client-dynamodb');
 const router = express.Router();
-const ddb = new DynamoDBClient({ region: 'eu-north-1' });
+const ddb = new DynamoDBClient({ region: process.env.AWS_REGION_EU });
 const verifyToken = require('../../utils/verifyToken');
 
 router.post('/', verifyToken, async (req, res) => {

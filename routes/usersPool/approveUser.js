@@ -9,8 +9,8 @@ require('dotenv').config();
 
 // Initialize Cognito client with region and credentials
 const cognito = new CognitoIdentityProviderClient({
-  region: 'eu-north-1',
-  credentials: {
+  region: process.env.AWS_REGION_EU,
+  credentials: { 
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
   }

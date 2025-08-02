@@ -4,7 +4,7 @@ const { marshall, unmarshall } = require('@aws-sdk/util-dynamodb');
 require('dotenv').config();
 const verifyToken = require('../../utils/verifyToken');
 const router = express.Router();
-const ddb = new DynamoDBClient({ region: 'eu-north-1', credentials: {
+const ddb = new DynamoDBClient({ region: process.env.AWS_REGION_EU, credentials: {
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
 }});

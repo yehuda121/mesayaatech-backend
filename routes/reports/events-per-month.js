@@ -4,7 +4,7 @@ const router = express.Router();
 const { DynamoDBClient, ScanCommand } = require('@aws-sdk/client-dynamodb');
 const { unmarshall } = require('@aws-sdk/util-dynamodb');
 const verifyToken = require('../../utils/verifyToken');
-const ddb = new DynamoDBClient({ region: 'eu-north-1' });
+const ddb = new DynamoDBClient({ region: process.env.AWS_REGION_EU });
 
 function getMonthKey(dateString) {
   const date = new Date(dateString);

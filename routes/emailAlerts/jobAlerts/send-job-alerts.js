@@ -7,8 +7,8 @@ const { DynamoDBClient, ScanCommand } = require("@aws-sdk/client-dynamodb");
 const { unmarshall } = require("@aws-sdk/util-dynamodb");
 const verifyToken = require('../../../utils/verifyToken');
 // Initialize AWS clients
-const ses = new SESClient({ region: "us-east-1" });
-const dynamo = new DynamoDBClient({ region: "eu-north-1" });
+const ses = new SESClient({ region: process.env.AWS_REGION_US });
+const dynamo = new DynamoDBClient({ region: process.env.AWS_REGION_EU });
 
 /**
  * Basic security check to prevent sending malicious content.

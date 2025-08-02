@@ -1,7 +1,7 @@
 const { DynamoDBClient, PutItemCommand, QueryCommand, UpdateItemCommand } = require('@aws-sdk/client-dynamodb');
 const { marshall, unmarshall } = require('@aws-sdk/util-dynamodb');
 
-const dynamo = new DynamoDBClient({ region: 'eu-north-1' });
+const dynamo = new DynamoDBClient({ region: process.env.AWS_REGION_EU });
 const TABLE_NAME = 'interviewSessions';
 const MAX_DAILY_QUESTIONS = 10;
 

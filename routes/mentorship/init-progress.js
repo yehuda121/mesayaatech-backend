@@ -4,7 +4,7 @@ const { DynamoDBClient, GetItemCommand, PutItemCommand } = require('@aws-sdk/cli
 const { marshall, unmarshall } = require('@aws-sdk/util-dynamodb');
 const verifyToken = require('../../utils/verifyToken');
 const router = express.Router();
-const ddb = new DynamoDBClient({ region: 'eu-north-1' });
+const ddb = new DynamoDBClient({ region: process.env.AWS_REGION_EU });
 
 router.post('/',verifyToken, async (req, res) => {
   const { mentorId, reservistId } = req.body;

@@ -5,7 +5,7 @@ const {
 const { buildPrompt, buildMatchPrompt  } = require('../mentorReserveMatch/promptBuilder');
 
 const client = new BedrockRuntimeClient({
-  region: 'us-east-1',
+  region: process.env.AWS_REGION_US,
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,

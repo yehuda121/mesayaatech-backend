@@ -1,7 +1,7 @@
 const { DynamoDBClient, QueryCommand } = require('@aws-sdk/client-dynamodb');
 const { unmarshall, marshall } = require('@aws-sdk/util-dynamodb');
 
-const dynamo = new DynamoDBClient({ region: 'eu-north-1' });
+const dynamo = new DynamoDBClient({ region: process.env.AWS_REGION_US });
 const TABLE_NAME = 'interviewSessions';
 
 module.exports = async (req, res) => {

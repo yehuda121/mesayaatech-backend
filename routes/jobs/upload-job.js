@@ -9,7 +9,7 @@ const router = express.Router();
 require('dotenv').config();
 const verifyToken = require('../../utils/verifyToken');
 const s3 = new S3Client({
-  region: 'eu-north-1',
+  region: process.env.AWS_REGION_EU,
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -18,7 +18,7 @@ const s3 = new S3Client({
 
 // AWS DynamoDB client
 const ddb = new DynamoDBClient({
-  region: 'eu-north-1',
+  region: process.env.AWS_REGION_EU,
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,

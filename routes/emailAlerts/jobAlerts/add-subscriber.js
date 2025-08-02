@@ -5,9 +5,9 @@ const router = express.Router();
 const { DynamoDBClient, GetItemCommand, PutItemCommand } = require("@aws-sdk/client-dynamodb");
 const { marshall } = require("@aws-sdk/util-dynamodb");
 const verifyToken = require('../../../utils/verifyToken');
-// Initialize the DynamoDB client for the us-east-1 region
+// Initialize the DynamoDB client
 const dynamo = new DynamoDBClient({
-  region: process.env.AWS_REGION,
+  region: process.env.AWS_REGION_EU,
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
