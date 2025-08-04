@@ -26,7 +26,8 @@ router.post('/', verifyToken, async (req, res) => {
     const command = new ChangePasswordCommand({
       PreviousPassword: currentPassword,
       ProposedPassword: newPassword,
-      AccessToken: authHeader
+      // AccessToken: authHeader
+      AccessToken: authHeader.replace('Bearer ', '')
     });
 
     await cognito.send(command);
