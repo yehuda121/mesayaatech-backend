@@ -8,7 +8,7 @@ const { unmarshall } = require("@aws-sdk/util-dynamodb");
 const verifyToken = require('../../../utils/verifyToken');
 // Initialize DynamoDB client
 const dynamo = new DynamoDBClient({
-  region: process.env.AWS_REGION,
+  region: process.env.AWS_REGION_EU,
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
