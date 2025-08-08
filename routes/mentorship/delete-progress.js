@@ -9,7 +9,7 @@ router.post('/', verifyToken, async (req, res) => {
 
   if (!mentorId || !reservistId) {
     console.error('Missing IDs');
-    console.log('Missing IDs');
+    // console.log('Missing IDs');
     return res.status(400).json({ error: 'Missing IDs' });
   }
 

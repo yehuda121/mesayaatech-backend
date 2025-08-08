@@ -29,7 +29,7 @@ router.post('/',verifyToken, async (req, res) => {
 
     const { Item } = await ddb.send(getCommand);
     if (Item) {
-      console.log('Mentorship progress already exists for:', PK, SK);
+      // console.log('Mentorship progress already exists for:', PK, SK); 
       return res.status(200).json({ message: 'Already exists' });
     } 
 
