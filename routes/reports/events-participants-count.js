@@ -18,7 +18,6 @@ const ddb = new DynamoDBClient({
 router.get('/', verifyToken, async (req, res) => {
   try {
     // console.log('Starting scan for events with SK = metadata');
-
     const command = new ScanCommand({
       TableName: 'Events',
       FilterExpression: 'SK = :metadata',
@@ -31,17 +30,17 @@ router.get('/', verifyToken, async (req, res) => {
     // console.log(`Scan response received. Total items: ${response.Items?.length || 0}`);
 
     if (!response.Items || response.Items.length === 0) {
-      console.log('No matching events found in the Events table.');
+      // console.log('No matching events found in the Events table.');
       return res.status(200).json([]);
     }
 
     const result = response.Items.map((item, index) => {
       const event = unmarshall(item);
-      console.log(`Event #${index + 1}:`, {
-        title: event.title,
-        date: event.date,
-        participants: event.participants?.length || 0
-      });
+      // console.log(`Event #${index + 1}:`, {
+      //   title: event.title,
+      //   date: event.date,
+      //   participants: event.participants?.length || 0
+      // });
 
       return {
         title: event.title || 'Untitled',

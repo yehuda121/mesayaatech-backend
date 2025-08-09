@@ -31,8 +31,6 @@ const upload = multer({ storage });
 
 // POST /api/jobs
 router.post('/', verifyToken, upload.single('attachment'), async (req, res) => {
-  // console.log("Received job submission");
-
   try {
     const jobId = uuidv4();
     const {
@@ -41,11 +39,12 @@ router.post('/', verifyToken, upload.single('attachment'), async (req, res) => {
       companyWebsite, jobViewLink, publisherId, publisherType
     } = req.body;
 
-
-    if (!publisherId) {
+    if (!publisherId || !publisherType) {
       console.warn("Missing required fields");
       return res.status(400).json({ error: 'Missing required fields' });
     }
+
+    let finalPublisherId = publisherType === 'admin' ? 'mesayaatech@gmail.com' : publisherId;
 
     let attachmentUrl = "";
 
@@ -87,8 +86,8 @@ router.post('/', verifyToken, upload.single('attachment'), async (req, res) => {
       submitLink: submitLink || '',
       companyWebsite: companyWebsite || '',
       jobViewLink: jobViewLink || '',
-      publisherId,
-      publisherType: publisherType || '',
+      publisherId: finalPublisherId,
+      publisherType,
       postedAt: new Date().toISOString(),
       attachmentUrl,
     };
@@ -115,7 +114,10 @@ router.post('/', verifyToken, upload.single('attachment'), async (req, res) => {
         // Send job alert email to subscribers
         const res = await fetch('http://localhost:5000/api/jobAlerts/send-job-alerts', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': req.headers.authorization
+          },
           body: JSON.stringify({
             message: `משרה חדשה פורסמה: ${role} בחברת ${company}.`,
             fields: [req.body.field] 
